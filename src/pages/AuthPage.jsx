@@ -15,8 +15,10 @@ import {
 } from "@mui/material";
 import { Email, Lock, Person } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
-
+import {toast} from 'react-toastify'
+import { useRegisterUserMutation } from "../store/api/userApi";
 export const AuthPage = () => {
+  
   const [tab, setTab] = useState(0);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -66,11 +68,14 @@ export const AuthPage = () => {
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
-
+  
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleLogin = () => {
+    if(!formData?.password || !formData?.email){
+     return toast.warn("all fields are required")
+    }
     console.log("Login data:", formData);
   };
 
@@ -94,6 +99,7 @@ const LoginForm = () => {
       <TextField
         name="password"
         label="Password"
+        required="true"
         type="password"
         fullWidth
         value={formData.password}
@@ -120,6 +126,7 @@ const LoginForm = () => {
 };
 
 const SignupForm = () => {
+  const [registerApi,registerResp] = useRegisterUserMutation()
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -136,9 +143,25 @@ const SignupForm = () => {
       setFormData({ ...formData, avatar: file });
     }
   };
+    console.log(registerResp);
+  
+  const handleSignup = async() => {
+    if(!formData?.name || !formData?.email || !formData?.password){
+      return toast.warn("all fields are required")
+    }
 
-  const handleSignup = () => {
-    console.log("Signup data:", formData);
+    const resp = await registerApi(formData)
+    if(resp?.data?.success){
+      toast.success("register success")
+      setFormData({
+    name: "",
+    email: "",
+    password: "",
+    avatar: null,
+  })
+    }else{
+      toast.error("register failed")
+    }
   };
 
   return (
@@ -150,6 +173,7 @@ const SignupForm = () => {
             id="avatar-upload"
             type="file"
             hidden
+        required="true"
             onChange={handleAvatarChange}
           />
           <IconButton component="span">
@@ -166,6 +190,7 @@ const SignupForm = () => {
       </Box>
       <TextField
         name="name"
+        required="true"
         label="Full Name"
         fullWidth
         value={formData.name}
@@ -183,6 +208,7 @@ const SignupForm = () => {
         label="Email"
         type="email"
         fullWidth
+        required="true"
         value={formData.email}
         onChange={handleChange}
         InputProps={{
@@ -197,6 +223,7 @@ const SignupForm = () => {
         name="password"
         label="Password"
         type="password"
+        required="true"
         fullWidth
         value={formData.password}
         onChange={handleChange}

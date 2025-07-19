@@ -9,6 +9,7 @@ export const userApi = createApi({
             query:(data)=>({
                 url:"/register",
                 body:data,
+                method:"POST",
                 credentials:"include"
             })
         })
