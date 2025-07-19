@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Tabs,
@@ -16,9 +16,16 @@ import {
 import { Email, Lock, Person } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import {toast} from 'react-toastify'
-import { useRegisterUserMutation } from "../store/api/userApi";
+import { useLoginUserMutation, useRegisterUserMutation } from "../store/api/userApi";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 export const AuthPage = () => {
-  
+  console.log("rungin auth");
+  const {isAuthenticated} = useSelector((state)=>state?.user)
+  const navigate = useNavigate()
+  // useEffect(()=>{
+  //   if(true) navigate("/")
+  // },[])
   const [tab, setTab] = useState(0);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -67,16 +74,22 @@ export const AuthPage = () => {
 };
 
 const LoginForm = () => {
+  // const {isAuthenticated} = useSelector((state)=>state.user) 
+  const navigate = useNavigate()
+  // if(isAuthenticated) navigate("/")
   const [formData, setFormData] = useState({ email: "", password: "" });
-  
+  const [loginApi,loginResp] = useLoginUserMutation()
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleLogin = () => {
+  const handleLogin = async() => {
     if(!formData?.password || !formData?.email){
      return toast.warn("all fields are required")
     }
-    console.log("Login data:", formData);
+    const resp = await loginApi(formData)
+    if(resp?.data?.success){
+      navigate("/")
+    }
   };
 
   return (
@@ -99,7 +112,7 @@ const LoginForm = () => {
       <TextField
         name="password"
         label="Password"
-        required="true"
+        required={true}
         type="password"
         fullWidth
         value={formData.password}
@@ -143,7 +156,6 @@ const SignupForm = () => {
       setFormData({ ...formData, avatar: file });
     }
   };
-    console.log(registerResp);
   
   const handleSignup = async() => {
     if(!formData?.name || !formData?.email || !formData?.password){

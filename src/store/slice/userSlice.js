@@ -10,10 +10,11 @@ const userSlice = createSlice({
     initialState,
     reducers:{
         setUser:(state,action)=>{
-
+           state.user = action.payload
+           state.isAuthenticated = true
         }
     }
 })
 
-const {setUser} = userSlice.actions
+export const {setUser} = userSlice.actions
 export default userSlice.reducer
