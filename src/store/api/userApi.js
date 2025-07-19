@@ -25,8 +25,15 @@ export const userApi = createApi({
                 const {data} =await queryFulfilled
                 dispatch(setUser(data))
             }
+        }),
+        directLogin:builder.query({
+            query:()=>({
+                url:"directlogin",
+                credentials:"include",
+                method:"GET"
+            })
         })
     })
 })
 
-export const {useRegisterUserMutation,useLoginUserMutation} = userApi
+export const {useRegisterUserMutation,useLoginUserMutation,useDirectLoginQuery} = userApi
