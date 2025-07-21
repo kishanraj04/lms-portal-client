@@ -1,76 +1,148 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Grid,
-  Skeleton,
+  TextField,
+  Card,
+  CardMedia,
+  CardContent,
+  Typography,
+  Button,
+  CardActions,
+  Chip,
   Stack,
-  Divider,
-  Paper
+  Skeleton,
+  InputAdornment
 } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+
+const sampleCourses = [
+  {
+    id: 1,
+    title: 'Full Stack Web Development',
+    thumbnail: 'https://source.unsplash.com/400x250/?web,development',
+    price: 4999,
+    discountPrice: 2999,
+    description: 'Learn MERN stack from scratch and build real-world projects.',
+    instructor: {
+      name: 'John Doe',
+      avatar: 'https://i.pravatar.cc/150?img=3',
+    },
+  },
+  {
+    id: 2,
+    title: 'Data Science with Python',
+    thumbnail: 'https://source.unsplash.com/400x250/?data,python',
+    price: 3999,
+    discountPrice: 1999,
+    description: 'Master data analysis, visualization, and machine learning.',
+    instructor: {
+      name: 'Jane Smith',
+      avatar: 'https://i.pravatar.cc/150?img=6',
+    },
+  },
+];
 
 const Loader = () => {
+  const [query, setQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [courses, setCourses] = useState([]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setCourses(sampleCourses);
+      setLoading(false);
+    }, 1500);
+  }, []);
+
+  const filteredCourses = courses.filter(course =>
+    course.title.toLowerCase().includes(query.toLowerCase())
+  );
+
+  const renderSkeleton = () => (
+    <Grid item xs={12} sm={6} md={4}>
+      <Card sx={{ p: 2 }}>
+        <Skeleton variant="rectangular" height={200} />
+        <Skeleton variant="text" height={30} sx={{ mt: 2 }} />
+        <Skeleton variant="text" width="80%" />
+        <Skeleton variant="circular" width={40} height={40} sx={{ mt: 1 }} />
+        <Skeleton variant="rectangular" height={40} sx={{ mt: 2 }} />
+      </Card>
+    </Grid>
+  );
+
   return (
-    <Box display="flex" height="100vh" bgcolor="#f9fafb">
-      {/* Sidebar */}
+    <Box p={2} sx={{ background: '#f7f7f7', minHeight: '100vh' }}>
       <Box
-        width={240}
-        p={3}
-        bgcolor="white"
-        borderRight="1px solid #e0e0e0"
+        mb={4}
+        display="flex"
+        justifyContent="center"
+        flexWrap="wrap"
       >
-        <Stack spacing={2}>
-          <Skeleton variant="circular" width={60} height={60} />
-          {[...Array(6)].map((_, i) => (
-            <Skeleton key={i} variant="rounded" width="80%" height={20} />
-          ))}
-        </Stack>
+        <TextField
+          variant="outlined"
+          placeholder="Search courses..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+          sx={{
+            width: '100%',
+            maxWidth: 500,
+            backgroundColor: '#fff',
+            borderRadius: '25px',
+            boxShadow: 2,
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '25px',
+            },
+          }}
+        />
       </Box>
 
-      {/* Main Content */}
-      <Box flexGrow={1} p={4} overflow="auto">
-        {/* Top header */}
-        <Skeleton variant="rounded" width="30%" height={40} sx={{ mb: 4 }} />
-
-        {/* Course Cards */}
-        <Grid container spacing={3}>
-          {[...Array(3)].map((_, i) => (
-            <Grid item xs={12} sm={6} md={4} key={i}>
-              <Paper elevation={1} sx={{ p: 2 }}>
-                <Skeleton variant="rounded" width="100%" height={120} />
-                <Skeleton variant="text" width="60%" height={25} sx={{ mt: 2 }} />
-                <Skeleton variant="text" width="40%" height={20} />
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
-
-        {/* Section Divider */}
-        <Box my={5}>
-          <Divider />
-          <Skeleton variant="text" width="25%" height={30} sx={{ mt: 2 }} />
-        </Box>
-
-        {/* Recent Activity List */}
-        <Grid container spacing={2}>
-          {[...Array(5)].map((_, i) => (
-            <Grid item xs={12} key={i}>
-              <Paper elevation={0} sx={{ p: 2, bgcolor: "#fff" }}>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <Skeleton variant="text" width="90%" height={20} />
-                  </Grid>
-                  <Grid item xs={3}>
-                    <Skeleton variant="text" width="70%" height={20} />
-                  </Grid>
-                  <Grid item xs={3}>
-                    <Skeleton variant="text" width="60%" height={20} />
-                  </Grid>
+      <Grid container spacing={4} justifyContent="center">
+        {loading
+          ? Array.from(new Array(6)).map((_, i) => <React.Fragment key={i}>{renderSkeleton()}</React.Fragment>)
+          : filteredCourses.length > 0 ? (
+              filteredCourses.map(course => (
+                <Grid item xs={12} sm={6} md={4} key={course.id}>
+                  <Card sx={{ width: '100%', maxWidth: 360, mx: 'auto', boxShadow: 4 }}>
+                    <CardMedia component="img" height="180" image={course.thumbnail} alt={course.title} />
+                    <CardContent>
+                      <Typography variant="h6" fontWeight="bold" gutterBottom>
+                        {course.title}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        {course.description}
+                      </Typography>
+                      <Stack direction="row" alignItems="center" spacing={1} mt={2}>
+                        <Typography variant="h6" color="primary">₹{course.discountPrice}</Typography>
+                        <Typography variant="body2" sx={{ textDecoration: 'line-through' }}>
+                          ₹{course.price}
+                        </Typography>
+                        <Chip label={`Save ₹${course.price - course.discountPrice}`} size="small" color="success" />
+                      </Stack>
+                      <Stack direction="row" alignItems="center" spacing={1} mt={2}>
+                        <img src={course.instructor.avatar} alt={course.instructor.name} width={30} height={30} style={{ borderRadius: '50%' }} />
+                        <Typography variant="body2">{course.instructor.name}</Typography>
+                      </Stack>
+                    </CardContent>
+                    <CardActions>
+                      <Button fullWidth variant="contained">Buy Now</Button>
+                    </CardActions>
+                  </Card>
                 </Grid>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
+              ))
+            ) : (
+              <Typography variant="body1" sx={{ mx: 'auto', mt: 10 }}>
+                No courses found for "{query}"
+              </Typography>
+            )}
+      </Grid>
     </Box>
   );
 };

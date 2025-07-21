@@ -24,6 +24,7 @@ const sampleCourses = [
     price: 4999,
     discountPrice: 2999,
     description: "Learn MERN stack from scratch and build real-world projects.",
+    courselevel:"advance",
     instructor: { name: "John Doe", avatar: "https://i.pravatar.cc/150?img=1" },
   },
   {
@@ -33,6 +34,7 @@ const sampleCourses = [
     price: 3999,
     discountPrice: 1999,
     description: "Master data analysis, visualization, and machine learning.",
+    courselevel:"advance",
     instructor: {
       name: "Alice Smith",
       avatar: "https://i.pravatar.cc/150?img=2",
@@ -44,6 +46,7 @@ const sampleCourses = [
     thumbnail: "https://source.unsplash.com/400x250/?design,uiux",
     price: 2999,
     discountPrice: 1499,
+    courselevel:"medium",
     description: "Design stunning interfaces and learn Figma & Adobe XD.",
     instructor: {
       name: "Emma Johnson",
@@ -58,20 +61,16 @@ const Courses = () => {
 
   const handleSearch = () => setSearchTerm(query);
 
-  const filteredCourses = sampleCourses.filter((course) =>
-    course.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <Box p={3} bgcolor="#f5f5f5" minHeight="100vh">
       {/* Search Section */}
-      <Box
+      {/* <Box
         mb={4}
         display="flex"
         gap={2}
-        flexDirection={{  sm: "row"}}
+        flexDirection={{ sm: "row" }}
         alignItems="center"
-        sx={{display:"flex" , justifyContent:"center" , alignItems:"center"}}
+        sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
       >
         <TextField
           fullWidth
@@ -84,9 +83,9 @@ const Courses = () => {
               borderRadius: "25px",
               paddingRight: "0px",
             },
-            width:"70%",
-            overflow:"auto",
-            outline:"none"
+            width: "70%",
+            overflow: "auto",
+            outline: "none",
           }}
           InputProps={{
             startAdornment: (
@@ -108,11 +107,11 @@ const Courses = () => {
         >
           Search
         </Button>
-      </Box>
+      </Box> */}
 
       {/* Courses Grid */}
       <Grid container spacing={2}>
-        {filteredCourses.map((course) => (
+        {sampleCourses?.map((course) => (
           <Grid item xs={12} sm={6} md={4} key={course.id}>
             <Card elevation={2} sx={{ borderRadius: 2 }}>
               <CardMedia
@@ -148,8 +147,15 @@ const Courses = () => {
                   />
                 </Stack>
 
-                <Stack direction="row" alignItems="center" spacing={1} mt={2}>
-                  <Avatar
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  spacing={1}
+                  mt={2}
+                  sx={{ display: "flex", justifyContent:"space-between" }}
+                >
+                  <Box sx={{display:"flex" , justifyContent:"center" , alignItems:"center"}}>
+                    <Avatar
                     src={course.instructor.avatar}
                     alt={course.instructor.name}
                     sx={{ width: 28, height: 28 }}
@@ -157,24 +163,20 @@ const Courses = () => {
                   <Typography variant="caption" color="text.secondary">
                     {course.instructor.name}
                   </Typography>
+                  </Box>
+
+                  <Chip
+                    label={`${course?.courselevel}`}
+                    size="small"
+                    color="secondary"
+                  />
                 </Stack>
               </CardContent>
-
-              <CardActions sx={{ p: 2, pt: 0 }}>
-                <Button
-                  fullWidth
-                  size="small"
-                  variant="contained"
-                  color="primary"
-                >
-                  Buy Now
-                </Button>
-              </CardActions>
             </Card>
           </Grid>
         ))}
 
-        {filteredCourses.length === 0 && (
+        {sampleCourses?.length === 0 && (
           <Typography variant="body1" sx={{ mx: "auto", mt: 10 }}>
             No courses found for "{searchTerm}"
           </Typography>
