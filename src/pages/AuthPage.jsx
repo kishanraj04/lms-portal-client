@@ -50,22 +50,27 @@ export const AuthPage = () => {
   const [tab, setTab] = useState(0);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
+  const [isDirectLogin,setIsDirectLogin] = useState(false)
   // Auto-login if session is valid
   useEffect(() => {
 
     (async()=>{
-      const resp = await axios.get("http://localhost:3000/api/v1/user/directlogin",{
+     try {
+      setIsDirectLogin(true)
+       const resp = await axios.get("http://localhost:3000/api/v1/user/directlogin",{
         withCredentials:"include"
       })
        if (resp?.data?.success) {
       dispatch(setUser(resp?.data.user));
       navigate("/");
+      setIsDirectLogin(false)
     }
+     } catch (error) {
+       console.log(error?.message); 
+     }
     })()
    
   }, []);
-
   // if (isLoading) return <Loader/>;
 
   return (

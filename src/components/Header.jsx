@@ -21,11 +21,14 @@ import { ListItemIcon } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { logoutUserHelper } from "../helper/auth";
 import { useLazyLogoutUserQuery } from "../store/api/userApi";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { Home, HomeFilled } from "@mui/icons-material";
 
 const pages = ["Products", "Pricing", "Blog"];
 const settingsWithIcons = [
+  { name: "Home", icon: <Home fontSize="small" /> },
   { name: "Profile", icon: <AccountCircleIcon fontSize="small" /> },
+
   { name: "Account", icon: <SettingsIcon fontSize="small" /> },
   { name: "Learning", icon: <SchoolIcon fontSize="small" /> },
   { name: "DashBoard", icon: <DashboardIcon fontSize="small" /> },
@@ -35,8 +38,9 @@ function Header() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const navigate = useNavigate();
-  const [logoutUser,logoutRes] = useLazyLogoutUserQuery()
-  const dispatch = useDispatch()
+  const [logoutUser, logoutRes] = useLazyLogoutUserQuery();
+  const dispatch = useDispatch();
+  const {user} = useSelector((state)=>state?.user)
   const role = "instructor";
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -59,13 +63,15 @@ function Header() {
       navigate("/account");
     } else if (name == "Learning") {
       navigate("/learning");
-    }else if(name=="Logout"){
-      logoutUserHelper(logoutUser)
+    } else if (name == "Logout") {
+      logoutUserHelper(logoutUser);
+    }else if(name=="Home"){
+      navigate("/")
     }
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ backgroundColor: "#1a237e",}}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
@@ -154,7 +160,7 @@ function Header() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt="Remy Sharp" src={user?.avatar}/>
               </IconButton>
             </Tooltip>
             <Menu
@@ -174,7 +180,7 @@ function Header() {
               onClose={handleCloseUserMenu}
             >
               {settingsWithIcons.map(({ name, icon }) => {
-                if (name === "DashBoard" && role !== "instructor") return null;
+                if (name === "DashBoard" && user?.role !== "instructor") return null;
 
                 return (
                   <MenuItem
