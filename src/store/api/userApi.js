@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import {setUser} from "../slice/userSlice"
+import {logoutUser, setUser} from "../slice/userSlice"
+import {toast} from 'react-toastify'
 export const userApi = createApi({
     reducerPath:"userApi",
     baseQuery:fetchBaseQuery({
@@ -30,10 +31,24 @@ export const userApi = createApi({
             query:()=>({
                 url:"directlogin",
                 credentials:"include",
-                method:"GET"
+                method:"GET",
+                keepUnusedDataFor: 0,
             })
+        }),
+        logoutUser:builder.query({
+            query:()=>({
+                url:"logout",
+                credentials:"include"
+            }),
+            async onQueryStarted(args,{queryFulfilled,dispatch}){
+                const {data} =await queryFulfilled
+                if(data?.success){
+                    dispatch(logoutUser())
+                    toast.success(data?.message)
+                }
+            }
         })
     })
 })
 
-export const {useRegisterUserMutation,useLoginUserMutation,useDirectLoginQuery} = userApi
+export const {useRegisterUserMutation,useLoginUserMutation,useDirectLoginQuery,useLazyLogoutUserQuery} = userApi

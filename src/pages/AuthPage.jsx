@@ -26,7 +26,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../store/slice/userSlice";
 import Loader from "../components/Loader";
-
+import axios from 'axios'
 // Loader Component
 // const Loader = () => (
 //   <Box
@@ -45,7 +45,6 @@ import Loader from "../components/Loader";
 
 // AuthPage
 export const AuthPage = () => {
-  const { data, isLoading } = useDirectLoginQuery();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [tab, setTab] = useState(0);
@@ -54,13 +53,20 @@ export const AuthPage = () => {
 
   // Auto-login if session is valid
   useEffect(() => {
-    if (data?.success) {
-      dispatch(setUser(data.user));
+
+    (async()=>{
+      const resp = await axios.get("http://localhost:3000/api/v1/user/directlogin",{
+        withCredentials:"include"
+      })
+       if (resp?.data?.success) {
+      dispatch(setUser(resp?.data.user));
       navigate("/");
     }
-  }, [data]);
+    })()
+   
+  }, []);
 
-  if (isLoading) return <Loader/>;
+  // if (isLoading) return <Loader/>;
 
   return (
     <Box
@@ -182,8 +188,8 @@ const SignupForm = () => {
   };
 
   const handleSignup = async () => {
-    const { name, email, password } = formData;
-    if (!name || !email || !password) {
+    const { name, email, password,avatar} = formData;
+    if (!name || !email || !password || !avatar) {
       return toast.warn("All fields are required");
     }
 
@@ -198,7 +204,7 @@ const SignupForm = () => {
     const res = await registerApi(formDataToSend);
     if (res?.data?.success) {
       toast.success("Registration successful");
-      setFormData({ name: "", email: "", password: "", avatar: null });
+      // setFormData({ name: "", email: "", password: "", avatar: null });
     } else {
       toast.error(res?.error?.data?.message || "Registration failed");
     }

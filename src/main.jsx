@@ -8,6 +8,12 @@ import { AuthPage } from "./pages/AuthPage.jsx";
 import { Provider } from "react-redux";
 import { store } from "./store/configureStore.js";
 import { ToastContainer } from "react-toastify";
+import Home from "./pages/Home.jsx";
+import Profile from "./pages/Profile.jsx";
+import Learning from "./pages/Learning.jsx";
+import { Dashboard } from "@mui/icons-material";
+import DahsBoard from "./pages/DahsBoard.jsx";
+import Account from "./pages/Account.jsx";
 const route = createBrowserRouter([
   {
     path: "/auth",
@@ -16,6 +22,32 @@ const route = createBrowserRouter([
   {
     path: "/",
     element: <ProtectedRoute></ProtectedRoute>,
+    children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
+      {
+        path: "/profile",
+        element: <Profile />,
+      },
+      {
+        path: "/learning",
+        element: <Learning />,
+      },
+      {
+        path: "/dashboard",
+        element: <DahsBoard />,
+      },
+      {
+        path: "/account",
+        element: <Account />,
+      },
+    ],
+  },
+  {
+    path: "*",
+    element: <h1>Page Not Found</h1>,
   },
 ]);
 
