@@ -48,9 +48,16 @@ export const userApi = createApi({
                 }
             }
         }),
+        getProfile:builder.query({
+            query:()=>({
+                url:"/user/profile",
+                credentials:"include",
+                method:"GET"
+            })
+        }),
         updateUserProfile:builder.mutation({
             query:(data)=>({
-                query:"/update/profile",
+                url:"/update/profile",
                 credentials:"include",
                 body:data,
                 method:"PUT"
@@ -59,4 +66,4 @@ export const userApi = createApi({
     })
 })
 
-export const {useRegisterUserMutation,useLoginUserMutation,useDirectLoginQuery,useLazyLogoutUserQuery,useUpdateUserProfileMutation} = userApi
+export const {useRegisterUserMutation,useLoginUserMutation,useDirectLoginQuery,useLazyLogoutUserQuery,useUpdateUserProfileMutation,useGetProfileQuery} = userApi

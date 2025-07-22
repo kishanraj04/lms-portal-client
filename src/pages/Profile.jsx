@@ -14,47 +14,66 @@ import {
   Typography,
 } from "@mui/material";
 import { useSelector } from "react-redux";
-import { useUpdateUserProfileMutation } from "../store/api/userApi";
+import {
+  useGetProfileQuery,
+  useUpdateUserProfileMutation,
+} from "../store/api/userApi";
 
 const Profile = () => {
   const [open, setOpen] = useState(false);
-  const [updateUserApi,updateUserApiResp] = useUpdateUserProfileMutation()
   const { user } = useSelector((state) => state?.user);
-
+  const [updateUserApi] = useUpdateUserProfileMutation();
+  const { data, isLoading: isProfileLoading } = useGetProfileQuery();
+  console.log(data,isProfileLoading);
   const [profile, setProfile] = useState({
     name: user?.name || "",
-    role: "Student",
-    avatar: user?.avatar || "https://i.pravatar.cc/150?img=10",
+    role: user?.role || "Student",
+    avatar: user?.avatar || "",
   });
 
+  // Open dialog
   const handleOpen = () => setOpen(true);
-  
-  const handleClose = () => {
+
+  // Close and submit
+  const handleClose = async () => {
     const formData = new FormData();
-    formData.append("name", profile?.name);
-    formData.append("role", profile?.role);
-    formData.append("avatar",profile?.avatar)
-    updateUserApi(formData)
+    formData.append("name", profile.name);
+    formData.append("role", profile.role);
+
+    if (profile.avatar && typeof profile.avatar !== "string") {
+      formData.append("avatar", profile.avatar);
+    } else {
+      formData.append("avatar", user?.avatar);
+    }
+
+    try {
+      await updateUserApi(formData).unwrap();
+    } catch (err) {
+      console.error("Update failed:", err);
+    }
+
     setOpen(false);
   };
 
+  // Handle text fields
   const handleChange = (e) => {
-    setProfile({ ...profile, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setProfile((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handle avatar upload
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setProfile({ ...formData, avatar: file });
+      setProfile((prev) => ({ ...prev, avatar: file }));
     }
   };
 
   return (
     <Box sx={{ maxWidth: 700, mx: "auto", mt: 5 }}>
-      {/* Main Horizontal Box */}
       <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
         <Stack direction="row" spacing={4} alignItems="center">
-          {/* Left: Avatar */}
+          {/* Left Box: Avatar */}
           <Box sx={{ textAlign: "center" }}>
             <Avatar
               src={user?.avatar}
@@ -65,7 +84,7 @@ const Profile = () => {
             </Typography>
           </Box>
 
-          {/* Right: Details */}
+          {/* Right Box: Info */}
           <Box flex={1}>
             <Typography variant="h6" gutterBottom>
               {user?.name}
@@ -80,7 +99,6 @@ const Profile = () => {
             >
               Role: {user?.role}
             </Typography>
-
             <Box mt={2}>
               <Button variant="outlined" onClick={handleOpen}>
                 Edit Profile
@@ -90,22 +108,27 @@ const Profile = () => {
         </Stack>
       </Paper>
 
-      {/* Dialog */}
-      <Dialog open={open} onClose={handleClose}>
+      {/* Dialog for editing */}
+      <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>Edit Profile</DialogTitle>
         <DialogContent>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+            {/* Avatar Upload */}
             <Box textAlign="center">
               <input
                 type="file"
                 accept="image/*"
-                onChange={handleAvatarChange}
                 id="upload-avatar"
                 style={{ display: "none" }}
+                onChange={handleAvatarChange}
               />
               <label htmlFor="upload-avatar">
                 <Avatar
-                  src={profile.avatar}
+                  src={
+                    typeof profile.avatar === "string"
+                      ? profile.avatar
+                      : URL.createObjectURL(profile.avatar)
+                  }
                   sx={{
                     width: 80,
                     height: 80,
@@ -120,6 +143,7 @@ const Profile = () => {
               </label>
             </Box>
 
+            {/* Name */}
             <TextField
               label="Name"
               name="name"
@@ -127,7 +151,8 @@ const Profile = () => {
               onChange={handleChange}
               fullWidth
             />
-            
+
+            {/* Role */}
             <TextField
               select
               label="Role"
@@ -141,8 +166,9 @@ const Profile = () => {
             </TextField>
           </Box>
         </DialogContent>
+
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={() => setOpen(false)}>Cancel</Button>
           <Button variant="contained" onClick={handleClose}>
             Save
           </Button>
