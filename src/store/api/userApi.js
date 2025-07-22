@@ -47,8 +47,16 @@ export const userApi = createApi({
                     toast.success(data?.message)
                 }
             }
+        }),
+        updateUserProfile:builder.mutation({
+            query:(data)=>({
+                query:"/update/profile",
+                credentials:"include",
+                body:data,
+                method:"PUT"
+            })
         })
     })
 })
 
-export const {useRegisterUserMutation,useLoginUserMutation,useDirectLoginQuery,useLazyLogoutUserQuery} = userApi
+export const {useRegisterUserMutation,useLoginUserMutation,useDirectLoginQuery,useLazyLogoutUserQuery,useUpdateUserProfileMutation} = userApi

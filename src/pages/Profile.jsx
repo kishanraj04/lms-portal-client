@@ -14,15 +14,15 @@ import {
   Typography,
 } from "@mui/material";
 import { useSelector } from "react-redux";
+import { useUpdateUserProfileMutation } from "../store/api/userApi";
 
 const Profile = () => {
   const [open, setOpen] = useState(false);
-
+  const [updateUserApi,updateUserApiResp] = useUpdateUserProfileMutation()
   const { user } = useSelector((state) => state?.user);
 
   const [profile, setProfile] = useState({
     name: user?.name || "",
-    email: user?.email || "",
     role: "Student",
     avatar: user?.avatar || "https://i.pravatar.cc/150?img=10",
   });
@@ -32,9 +32,9 @@ const Profile = () => {
   const handleClose = () => {
     const formData = new FormData();
     formData.append("name", profile?.name);
-    formData.append("email", profile?.email);
     formData.append("role", profile?.role);
     formData.append("avatar",profile?.avatar)
+    updateUserApi(formData)
     setOpen(false);
   };
 
@@ -127,13 +127,7 @@ const Profile = () => {
               onChange={handleChange}
               fullWidth
             />
-            <TextField
-              label="Email"
-              name="email"
-              value={profile.email}
-              onChange={handleChange}
-              fullWidth
-            />
+            
             <TextField
               select
               label="Role"
