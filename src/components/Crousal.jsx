@@ -30,7 +30,7 @@ const Carousel = () => {
      <Box sx={{ width: "95%", overflow: "hidden" }}>
          <Slider {...settings}>
         {images.map((item, index) => (
-          <Box key={index} sx={{ position: "relative", outline: "none" }}>
+          <Box key={index} sx={{ position: "relative", outline: "none" , boxShadow: 3}}>
             <CardMedia
               component="img"
               image={item?.url}

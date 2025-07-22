@@ -197,7 +197,6 @@ const SignupForm = () => {
     if (!name || !email || !password || !avatar) {
       return toast.warn("All fields are required");
     }
-
     const formDataToSend = new FormData();
     formDataToSend.append("name", name);
     formDataToSend.append("email", email);
