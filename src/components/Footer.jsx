@@ -8,8 +8,7 @@ const Footer = () => {
       sx={{
         backgroundColor: "#1a237e",
         color: "#fff",
-        py: 4,
-        mt: 8,
+        py: 4
       }}
     >
       <Container maxWidth="lg">

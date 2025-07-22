@@ -1,71 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   IconButton,
-  Toolbar,
   useMediaQuery,
   useTheme,
-  Slide,
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import LeftDrawer from '../components/LeftDrawer';
+  Toolbar,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import LeftDrawer from "../components/LeftDrawer";
 
 const Dashboard = () => {
-  const [open, setOpen] = useState(false);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const [drawerOpen, setDrawerOpen] = useState(!isMobile);
 
-  const toggleDrawer = (value) => () => {
-    setOpen(value);
-  };
+  const handleDrawerToggle = () => setDrawerOpen(!drawerOpen);
+
+  // Auto set drawer open/close based on device size
+  useEffect(() => {
+    setDrawerOpen(!isMobile); // open by default on large, closed on mobile
+  }, [isMobile]);
 
   return (
-    <Box sx={{ display: 'flex', height: '60vh', color: '#fff' }}>
-      
-      {/* Drawer with animation */}
-      {isMobile ? (
-        <Slide direction="right" in={open} mountOnEnter unmountOnExit>
-          <Box
-            sx={{
-              position: 'absolute',
-              width: 240,
-              height: '100%',
-              bgcolor: '#1a1a1a',
-              zIndex: 1300,
-              boxShadow: 4,
-            }}
-          >
-            <LeftDrawer toggleDrawer={toggleDrawer} isMobile={isMobile} />
-          </Box>
-        </Slide>
-      ) : (
+    <Box sx={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+      {/* Layout Row */}
+      <Box sx={{ flex: 1, display: "flex", overflow: "hidden" }}>
+        {/* Left Drawer */}
         <Box
           sx={{
-            width: 240,
-            height: '100%',
-            bgcolor: '#1a1a1a',
-            display: 'flex',
-            flexDirection: 'column',
+            width: drawerOpen ? 240 : 0,
+            transition: "width 0.3s ease-in-out",
+            overflow: "hidden",
+            bgcolor: "#1a1a1a",
+            height: "100%",
           }}
         >
-          <LeftDrawer isMobile={false} />
+          {(drawerOpen || !isMobile) && (
+            <LeftDrawer isMobile={isMobile} onClose={handleDrawerToggle} />
+          )}
         </Box>
-      )}
 
-      {/* Main Content */}
-      <Box component="main" sx={{ flexGrow: 1 }}>
-        <Toolbar />
+        {/* Main Content */}
+        <Box sx={{ flexGrow: 1, bgcolor: "#121212", p: 2, overflowY: "auto" }}>
+          <Toolbar />
+         {isMobile && !drawerOpen && (
+  <IconButton
+    onClick={handleDrawerToggle}
+    sx={{
+      color: "white",
+      position: "absolute",
+      top:70 ,
+      left: 16,
+      zIndex: 1200,
+    }}
+  >
+    <MenuIcon />
+  </IconButton>
+)}
 
-        {/* Menu icon only on mobile and when drawer is closed */}
-        {isMobile && !open && (
-          <IconButton
-            onClick={toggleDrawer(true)}
-            sx={{ color: 'white' }}
-          >
-            <MenuIcon sx={{color:"blue"}}/>
-          </IconButton>
-        )}
-        
+          <Box sx={{ color: "white" }}>Dashboard content goes here.</Box>
+        </Box>
       </Box>
     </Box>
   );
