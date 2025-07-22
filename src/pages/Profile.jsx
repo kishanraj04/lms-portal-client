@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Avatar,
   Box,
@@ -7,61 +7,67 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Grid,
   MenuItem,
   Paper,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import { useSelector } from "react-redux";
 import {
   useGetProfileQuery,
   useUpdateUserProfileMutation,
 } from "../store/api/userApi";
+import Courses from "../components/Courses";
 
 const Profile = () => {
   const [open, setOpen] = useState(false);
-  const { user } = useSelector((state) => state?.user);
-  const [updateUserApi] = useUpdateUserProfileMutation();
-  const { data, isLoading: isProfileLoading } = useGetProfileQuery();
-  console.log(data,isProfileLoading);
+  const { data: userData, isLoading } = useGetProfileQuery();
+  const [updateUserProfile, updateUserProfileResp] =
+    useUpdateUserProfileMutation();
+
   const [profile, setProfile] = useState({
-    name: user?.name || "",
-    role: user?.role || "Student",
-    avatar: user?.avatar || "",
+    name: "",
+    role: "Student",
+    avatar: "",
   });
 
-  // Open dialog
-  const handleOpen = () => setOpen(true);
+  useEffect(() => {
+    if (userData?.user) {
+      setProfile({
+        name: userData.user.name || "",
+        role: userData.user.role || "Student",
+        avatar: userData.user.avatar || "",
+      });
+    }
+  }, [userData]);
 
-  // Close and submit
-  const handleClose = async () => {
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const handleSave = async () => {
     const formData = new FormData();
     formData.append("name", profile.name);
     formData.append("role", profile.role);
 
     if (profile.avatar && typeof profile.avatar !== "string") {
       formData.append("avatar", profile.avatar);
-    } else {
-      formData.append("avatar", user?.avatar);
     }
 
     try {
-      await updateUserApi(formData).unwrap();
-    } catch (err) {
-      console.error("Update failed:", err);
+      await updateUserProfile(formData).unwrap();
+    } catch (error) {
+      console.error("Failed to update profile:", error);
     }
 
-    setOpen(false);
+    handleClose();
   };
 
-  // Handle text fields
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProfile((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle avatar upload
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -70,13 +76,24 @@ const Profile = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 700, mx: "auto", mt: 5 }}>
-      <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
-        <Stack direction="row" spacing={4} alignItems="center">
-          {/* Left Box: Avatar */}
-          <Box sx={{ textAlign: "center" }}>
+    <Box sx={{ width: "100%", mx: "auto", mt: 4, px: { xs: 2, md: 4 } }}>
+      {/* Profile Section */}
+      <Paper
+        elevation={0}
+        sx={{
+          p: { xs: 2, sm: 4 },
+          borderRadius: 3,
+          maxWidth: "800px",
+          mx: "auto",
+          mb: 5
+
+        }}
+      >
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={4} alignItems="center">
+          {/* Avatar */}
+          <Box textAlign="center">
             <Avatar
-              src={user?.avatar}
+              src={userData?.user?.avatar || ""}
               sx={{ width: 120, height: 120, mb: 1 }}
             />
             <Typography variant="caption" color="text.secondary">
@@ -84,23 +101,19 @@ const Profile = () => {
             </Typography>
           </Box>
 
-          {/* Right Box: Info */}
+          {/* User Info */}
           <Box flex={1}>
-            <Typography variant="h6" gutterBottom>
-              {user?.name}
+            <Typography variant="h5" fontWeight="bold" gutterBottom>
+              {userData?.user?.name || "Unnamed"}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {user?.email}
+            <Typography variant="body1" color="text.secondary">
+              {userData?.user?.email}
             </Typography>
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              display="block"
-            >
-              Role: {user?.role}
+            <Typography variant="body2" color="text.secondary" mt={1}>
+              Role: <strong>{userData?.user?.role}</strong>
             </Typography>
             <Box mt={2}>
-              <Button variant="outlined" onClick={handleOpen}>
+              <Button variant="contained" onClick={handleOpen}>
                 Edit Profile
               </Button>
             </Box>
@@ -108,8 +121,8 @@ const Profile = () => {
         </Stack>
       </Paper>
 
-      {/* Dialog for editing */}
-      <Dialog open={open} onClose={() => setOpen(false)}>
+      {/* Edit Profile Dialog */}
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
         <DialogTitle>Edit Profile</DialogTitle>
         <DialogContent>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
@@ -143,7 +156,7 @@ const Profile = () => {
               </label>
             </Box>
 
-            {/* Name */}
+            {/* Name Field */}
             <TextField
               label="Name"
               name="name"
@@ -152,7 +165,7 @@ const Profile = () => {
               fullWidth
             />
 
-            {/* Role */}
+            {/* Role Field */}
             <TextField
               select
               label="Role"
@@ -166,14 +179,63 @@ const Profile = () => {
             </TextField>
           </Box>
         </DialogContent>
-
-        <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleClose}>
-            Save
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button
+            variant="contained"
+            onClick={handleSave}
+            disabled={updateUserProfileResp.isLoading}
+          >
+            {updateUserProfileResp.isLoading ? "Updating..." : "Save"}
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Enrolled Courses */}
+      <Box
+        sx={{
+          width: "100%",
+          minHeight: "60vh",
+          py: 5,
+          px: { xs: 2, sm: 4, md: 6 },
+          borderRadius: 3,
+        }}
+      >
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+          textAlign="center"
+          gutterBottom
+        >
+          Enrolled Courses
+        </Typography>
+
+        <Grid
+          container
+          spacing={3}
+          justifyContent={
+            userData?.user?.enrolled?.length === 0 ? "center" : "flex-start"
+          }
+        >
+          {userData?.user?.enrolled?.length === 0 ? (
+            <Grid item xs={12}>
+              <Typography
+                variant="h6"
+                color="text.secondary"
+                textAlign="center"
+              >
+                You Are Not Enrolled In Any Courses
+              </Typography>
+            </Grid>
+          ) : (
+            userData?.user?.enrolled?.map((course, index) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                <Courses course={course} />
+              </Grid>
+            ))
+          )}
+        </Grid>
+      </Box>
     </Box>
   );
 };

@@ -3,6 +3,7 @@ import {logoutUser, setUser} from "../slice/userSlice"
 import {toast} from 'react-toastify'
 export const userApi = createApi({
     reducerPath:"userApi",
+    tagTypes:["profile"],
     baseQuery:fetchBaseQuery({
         baseUrl:"http://localhost:3000/api/v1/user/"
     }),
@@ -53,7 +54,8 @@ export const userApi = createApi({
                 url:"/user/profile",
                 credentials:"include",
                 method:"GET"
-            })
+            }),
+            providesTags:["profile"]
         }),
         updateUserProfile:builder.mutation({
             query:(data)=>({
@@ -61,7 +63,8 @@ export const userApi = createApi({
                 credentials:"include",
                 body:data,
                 method:"PUT"
-            })
+            }),
+            invalidatesTags:["profile"]
         })
     })
 })

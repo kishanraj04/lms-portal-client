@@ -51,11 +51,14 @@ function Home() {
       <Box   minHeight="100vh">
         <SearchBar />
 
-        <Grid container spacing={2}>
+        <Box sx={{width:"100%" , display:"flex" , justifyContent:"center", alignItems:"center"}}>
+
+           <Grid container spacing={2}>
           {sampleCourses.map((course) => (
             <Courses key={course.id} course={course} />
           ))}
         </Grid>
+        </Box>
       </Box>
     </div>
   );
