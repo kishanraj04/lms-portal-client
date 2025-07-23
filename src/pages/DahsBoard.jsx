@@ -16,7 +16,6 @@ const Dashboard = () => {
   const [drawerOpen, setDrawerOpen] = useState(!isMobile);
 
   const handleDrawerToggle = () => setDrawerOpen(!drawerOpen);
-
   useEffect(() => {
     setDrawerOpen(!isMobile);
   }, [isMobile]);
@@ -50,7 +49,7 @@ const Dashboard = () => {
           }}
         >
           {(drawerOpen || !isMobile) && (
-            <LeftDrawer isMobile={isMobile} onClose={handleDrawerToggle} />
+            <LeftDrawer isMobile={isMobile} onClose={handleDrawerToggle} setDrawerOpen={setDrawerOpen}/>
           )}
         </Box>
 
@@ -63,7 +62,7 @@ const Dashboard = () => {
             overflow: "hidden",
             minWidth: 0, // prevents overflow due to children
           }}
-        >
+         >
           {/* Toggle button for mobile */}
           {isMobile && !drawerOpen && (
             <IconButton

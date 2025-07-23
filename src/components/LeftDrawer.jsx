@@ -3,7 +3,7 @@ import { Box, IconButton, List, ListItem, ListItemText } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { Link } from "react-router-dom";
 
-const LeftDrawer = ({ isMobile, onClose }) => {
+const LeftDrawer = ({ isMobile, onClose,setDrawerOpen }) => {
   return (
     <Box
       sx={{
@@ -14,11 +14,13 @@ const LeftDrawer = ({ isMobile, onClose }) => {
         display: "flex",
         flexDirection: "column",
       }}
-    >
+     onClick={()=>{if(isMobile){
+        setDrawerOpen(!onClose)
+     }}}>
       {isMobile && (
         <Box sx={{ display: "flex", justifyContent: "flex-end", p: 1 }}>
           <IconButton onClick={onClose} sx={{ color: "white" }}>
-            <ChevronLeftIcon />
+            
           </IconButton>
         </Box>
       )}

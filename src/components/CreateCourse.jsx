@@ -201,6 +201,7 @@ const CreateCourse = () => {
               sx={{ borderRadius: 2 }}
             >
               <MenuItem value="basic">Basic</MenuItem>
+               <MenuItem value="basic">Medium</MenuItem>
               <MenuItem value="advance">Advance</MenuItem>
             </TextField>
 
@@ -232,8 +233,8 @@ const CreateCourse = () => {
                 sx={{
                   borderRadius: 2,
                   overflow: "hidden",
-                  maxHeight: 200,
-                  objectFit: "cover",
+                  height: 500,
+                  objectFit: "fill",
                 }}
               >
                 <img
