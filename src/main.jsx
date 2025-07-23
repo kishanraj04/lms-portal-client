@@ -14,6 +14,9 @@ import Learning from "./pages/Learning.jsx";
 import { Dashboard } from "@mui/icons-material";
 import DahsBoard from "./pages/DahsBoard.jsx";
 import Account from "./pages/Account.jsx";
+import Admin from "./components/Admin.jsx";
+import CreateCourse from "./components/CreateCourse.jsx";
+import ManageCourse from "./components/ManageCourse.jsx";
 const route = createBrowserRouter([
   {
     path: "/auth",
@@ -38,6 +41,20 @@ const route = createBrowserRouter([
       {
         path: "/dashboard",
         element: <DahsBoard />,
+        children: [
+          {
+            path: "",
+            element: <Admin />,
+          },
+          {
+            path:"create-course",
+            element:<CreateCourse/>
+          },
+          {
+            path:"manage-courses",
+            element:<ManageCourse/>
+          }
+        ],
       },
       {
         path: "/account",

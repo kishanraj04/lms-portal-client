@@ -1,12 +1,7 @@
-import React from 'react';
-import {
-  Box,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-} from '@mui/material';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import React from "react";
+import { Box, IconButton, List, ListItem, ListItemText } from "@mui/material";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import { Link } from "react-router-dom";
 
 const LeftDrawer = ({ isMobile, onClose }) => {
   return (
@@ -21,16 +16,27 @@ const LeftDrawer = ({ isMobile, onClose }) => {
       }}
     >
       {isMobile && (
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 1 }}>
-          <IconButton onClick={onClose} sx={{ color: 'white' }}>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", p: 1 }}>
+          <IconButton onClick={onClose} sx={{ color: "white" }}>
             <ChevronLeftIcon />
           </IconButton>
         </Box>
       )}
       <List>
-        {['Home', 'Courses', 'Profile'].map((text) => (
-          <ListItem button key={text}>
-            <ListItemText primary={text} />
+        {["Create Course", "Manage Courses"].map((text) => (
+          <ListItem key={text} disablePadding>
+            <Link
+              to={`/dashboard/${text.replace(/\s+/g, "-").toLowerCase()}`}
+              style={{
+                textDecoration: "none",
+                color: "inherit",
+                width: "100%",
+                display: "block",
+                padding: "12px 16px", // match MUI ListItem padding
+              }}
+            >
+              <ListItemText primary={text} />
+            </Link>
           </ListItem>
         ))}
       </List>
