@@ -13,15 +13,25 @@ import {
 
 const Courses = ({ course }) => {
   return (
-    <Grid item xs={12} sm={6} md={4}>
-      <Card elevation={2} sx={{ borderRadius: 2 }}>
+    <Grid item>
+  <Card
+    elevation={2}
+    sx={{
+      borderRadius: 2,
+      width: 300, // fixed width
+      display: "flex",
+      flexDirection: "column",
+      height: "100%",
+    }}
+  >
         <CardMedia
           component="img"
           height="180"
           image={course.thumbnail?.url}
           alt={course?.title}
         />
-        <CardContent sx={{ p: 2 }}>
+
+        <CardContent sx={{ p: 2, flexGrow: 1 }}>
           <Typography variant="subtitle1" fontWeight={600}>
             {course?.title}
           </Typography>
@@ -47,35 +57,31 @@ const Courses = ({ course }) => {
               color="success"
             />
           </Stack>
-
-          <Stack
-            direction="row"
-            alignItems="center"
-            spacing={1}
-            mt={2}
-            sx={{ display: "flex", justifyContent: "space-between" }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Avatar
-                src={course?.creator?.avatar}
-                alt={course?.creator?.name}
-                sx={{ width: 28, height: 28 }}
-              />
-              <Typography variant="caption" color="text.secondary">
-                {course?.creator?.name}
-              </Typography>
-            </Box>
-
-            <Chip
-              label={course?.courselevel}
-              size="small"
-              color="secondary"
-            />
-          </Stack>
         </CardContent>
+
+        <Box
+          px={2}
+          pb={2}
+          pt={0}
+          sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Avatar
+              src={course?.creator?.avatar}
+              alt={course?.creator?.name}
+              sx={{ width: 28, height: 28 }}
+            />
+            <Typography variant="caption" color="text.secondary">
+              {course?.creator?.name}
+            </Typography>
+          </Box>
+
+          <Chip label={course?.courselevel} size="small" color="secondary" />
+        </Box>
       </Card>
     </Grid>
   );
 };
+
 
 export default Courses;

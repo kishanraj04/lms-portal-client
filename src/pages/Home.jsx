@@ -6,8 +6,7 @@ import SearchBar from "../components/SearchBar";
 import { useGetAllCoursesQuery } from "../store/api/courseApi";
 
 function Home() {
-
-  const {data:courses} = useGetAllCoursesQuery()
+  const { data: courses } = useGetAllCoursesQuery();
   console.log(courses);
   const sampleCourses = [
     {
@@ -16,9 +15,13 @@ function Home() {
       thumbnail: "https://source.unsplash.com/400x250/?web,development",
       price: 4999,
       discountPrice: 2999,
-      description: "Learn MERN stack from scratch and build real-world projects.",
+      description:
+        "Learn MERN stack from scratch and build real-world projects.",
       courselevel: "advance",
-      instructor: { name: "John Doe", avatar: "https://i.pravatar.cc/150?img=1" },
+      instructor: {
+        name: "John Doe",
+        avatar: "https://i.pravatar.cc/150?img=1",
+      },
     },
     {
       id: 2,
@@ -51,18 +54,21 @@ function Home() {
   return (
     <div style={{ backgroundColor: "white" }}>
       <Carousel />
-
-      <Box   minHeight="100vh">
+      <Box minHeight="100vh">
+        {/* Search */}
         <SearchBar />
 
-        <Box sx={{width:"100%" , display:"flex" , justifyContent:"center", alignItems:"center"}}>
-
-           <Grid container spacing={2}>
+        {/* Courses Grid */}
+        <Grid
+          container
+          spacing={3}
+          justifyContent="center"
+          sx={{ px: { xs: 2, md: 4 }, py: 4 }}
+        >
           {courses?.message?.map((course) => (
-            <Courses key={course.id} course={course} />
+            <Courses key={course._id} course={course} />
           ))}
         </Grid>
-        </Box>
       </Box>
     </div>
   );

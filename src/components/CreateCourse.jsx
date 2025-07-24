@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -9,7 +9,10 @@ import {
   Paper,
   useMediaQuery,
   useTheme,
+  CircularProgress,
 } from "@mui/material";
+import { useCreateCourseMutation } from "../store/api/courseApi";
+import { toast } from "react-toastify";
 
 const CreateCourse = () => {
   const [formData, setFormData] = useState({
@@ -20,7 +23,7 @@ const CreateCourse = () => {
     courselevel: "basic",
     thumbnail: null,
   });
-
+  const [createCourse,creatCourseResp] = useCreateCourseMutation()
   const [preview, setPreview] = useState(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -46,14 +49,14 @@ const CreateCourse = () => {
       data.append(key, formData[key]);
     }
 
-    const res = await fetch("/api/courses", {
-      method: "POST",
-      body: data,
-    });
-
-    const result = await res.json();
-    console.log(result);
+    const res = await createCourse(data)
   };
+
+  useEffect(()=>{
+    if(creatCourseResp?.isError){
+      toast.error(creatCourseResp?.error)
+    }
+  },[creatCourseResp])
 
   return (
     <Box
@@ -245,7 +248,17 @@ const CreateCourse = () => {
               </Box>
             )}
 
-            <Button
+            {
+              creatCourseResp?.isLoading?<Box  sx={{
+                mt: 1,
+                border:"1px",
+                color: "#fff",
+                "&:hover": {
+                  backgroundColor: "#3c7407ff",
+                },
+                display:"flex",
+                justifyContent:"center"
+              }}><CircularProgress size={20}/></Box>:<Button
               type="submit"
               variant="contained"
               fullWidth
@@ -261,6 +274,7 @@ const CreateCourse = () => {
             >
               Create Course
             </Button>
+            }
           </Stack>
         </form>
       </Paper>

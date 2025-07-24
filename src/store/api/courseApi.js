@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import {toast} from 'react-toastify'
 export const courseApi = createApi({
     reducerPath:"courseApi",
     baseQuery:fetchBaseQuery({
@@ -11,8 +12,23 @@ export const courseApi = createApi({
             query:()=>({
                 url:"/allCourse",
             })
+        }),
+        getMyCourses:builder.query({
+            query:()=>({
+                url:"/me"
+            })
+        }),
+        createCourse:builder.mutation({
+            query:(course)=>({
+                url:"/create",
+                body:course,
+                method:"POST"
+            }),
+           async onQueryStarted(args,{queryFulfilled}){
+            toast.success("course created")
+           }
         })
     })
 })
 
-export const {useGetAllCoursesQuery} = courseApi
+export const {useGetAllCoursesQuery,useGetMyCoursesQuery,useCreateCourseMutation} = courseApi
