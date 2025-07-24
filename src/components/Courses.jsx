@@ -2,17 +2,13 @@ import React from "react";
 import {
   Box,
   Grid,
-  TextField,
   Card,
   CardMedia,
   CardContent,
   Typography,
-  Button,
-  CardActions,
   Chip,
   Stack,
   Avatar,
-  InputAdornment,
 } from "@mui/material";
 
 const Courses = ({ course }) => {
@@ -22,31 +18,31 @@ const Courses = ({ course }) => {
         <CardMedia
           component="img"
           height="180"
-          image={course.thumbnail}
-          alt={course.title}
+          image={course.thumbnail?.url}
+          alt={course?.title}
         />
         <CardContent sx={{ p: 2 }}>
           <Typography variant="subtitle1" fontWeight={600}>
-            {course.title}
+            {course?.title}
           </Typography>
 
           <Typography variant="body2" color="text.secondary" gutterBottom>
-            {course.description}
+            {course?.description}
           </Typography>
 
           <Stack direction="row" spacing={1} alignItems="center" mt={1}>
             <Typography variant="subtitle1" color="primary">
-              ₹{course.discountPrice}
+              ₹{Number(course?.price) - Number(course?.discountPrice)}
             </Typography>
             <Typography
               variant="body2"
               color="text.secondary"
               sx={{ textDecoration: "line-through" }}
             >
-              ₹{course.price}
+              ₹{course?.price}
             </Typography>
             <Chip
-              label={`Save ₹${course.price - course.discountPrice}`}
+              label={`Save ₹${Number(course?.discountPrice)}`}
               size="small"
               color="success"
             />
@@ -61,17 +57,17 @@ const Courses = ({ course }) => {
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <Avatar
-                src={course.instructor.avatar}
-                alt={course.instructor.name}
+                src={course?.creator?.avatar}
+                alt={course?.creator?.name}
                 sx={{ width: 28, height: 28 }}
               />
               <Typography variant="caption" color="text.secondary">
-                {course.instructor.name}
+                {course?.creator?.name}
               </Typography>
             </Box>
 
             <Chip
-              label={course.courselevel}
+              label={course?.courselevel}
               size="small"
               color="secondary"
             />

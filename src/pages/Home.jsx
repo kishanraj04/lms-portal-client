@@ -1,10 +1,14 @@
 import React from "react";
-import { Box, Grid } from "@mui/material";
+import { Box, darkScrollbar, Grid } from "@mui/material";
 import Carousel from "../components/Crousal";
 import Courses from "../components/Courses";
 import SearchBar from "../components/SearchBar";
+import { useGetAllCoursesQuery } from "../store/api/courseApi";
 
 function Home() {
+
+  const {data:courses} = useGetAllCoursesQuery()
+  console.log(courses);
   const sampleCourses = [
     {
       id: 1,
@@ -54,7 +58,7 @@ function Home() {
         <Box sx={{width:"100%" , display:"flex" , justifyContent:"center", alignItems:"center"}}>
 
            <Grid container spacing={2}>
-          {sampleCourses.map((course) => (
+          {courses?.message?.map((course) => (
             <Courses key={course.id} course={course} />
           ))}
         </Grid>
