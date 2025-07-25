@@ -18,6 +18,7 @@ import Admin from "./components/Admin.jsx";
 import CreateCourse from "./components/CreateCourse.jsx";
 import ManageCourse from "./components/ManageCourse.jsx";
 import EditCourse from "./components/EditCourse.jsx";
+import UploadLecturePage from "./components/UploadVedio.jsx";
 const route = createBrowserRouter([
   {
     path: "/auth",
@@ -58,6 +59,10 @@ const route = createBrowserRouter([
           {
             path:"manage-courses/:id",
             element:<EditCourse/>
+          },
+          {
+            path:"manage-courses/vedio/upload/:id",
+            element:<UploadLecturePage/>
           }
         ],
       },

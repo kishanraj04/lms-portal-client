@@ -3,7 +3,7 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
-import { Box, Button, IconButton, Tooltip } from "@mui/material";
+import { Box, Button, IconButton, Tooltip, Typography } from "@mui/material";
 import FormatBoldIcon from "@mui/icons-material/FormatBold";
 import FormatItalicIcon from "@mui/icons-material/FormatItalic";
 import FormatUnderlinedIcon from "@mui/icons-material/FormatUnderlined";
@@ -36,6 +36,7 @@ const TiptapEditor = ({ description, setDescription }) => {
           backgroundColor: "#000",
         }}
       >
+        <Typography>Description</Typography>
         <Box
           sx={{
             display: "flex",
@@ -47,6 +48,48 @@ const TiptapEditor = ({ description, setDescription }) => {
             borderRadius: "6px",
           }}
         >
+          <Tooltip title="Heading 1">
+            <IconButton
+              onClick={() =>
+                editor.chain().focus().toggleHeading({ level: 1 }).run()
+              }
+              color="inherit"
+            >
+              <Typography variant="h6" sx={{ color: "#fff" }}>
+                H1
+              </Typography>
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Heading 2">
+            <IconButton
+              onClick={() =>
+                editor.chain().focus().toggleHeading({ level: 2 }).run()
+              }
+              color="inherit"
+            >
+              <Typography
+                variant="h6"
+                sx={{ fontSize: "1.1rem", color: "#fff" }}
+              >
+                H2
+              </Typography>
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Heading 3">
+            <IconButton
+              onClick={() =>
+                editor.chain().focus().toggleHeading({ level: 3 }).run()
+              }
+              color="inherit"
+            >
+              <Typography variant="h6" sx={{ fontSize: "1rem", color: "#fff" }}>
+                H3
+              </Typography>
+            </IconButton>
+          </Tooltip>
+
           <Tooltip title="Bold">
             <IconButton
               onClick={() => editor.chain().focus().toggleBold().run()}

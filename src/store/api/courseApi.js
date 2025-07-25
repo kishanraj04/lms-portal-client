@@ -1,34 +1,63 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import {toast} from 'react-toastify'
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { toast } from "react-toastify";
 export const courseApi = createApi({
-    reducerPath:"courseApi",
-    baseQuery:fetchBaseQuery({
-        baseUrl:"http://localhost:3000/api/v1/course/",
-        credentials:"include"
+  reducerPath: "courseApi",
+  tagTypes:["course"],
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://localhost:3000/api/v1/course/",
+    credentials: "include",
+  }),
+
+  endpoints: (builder) => ({
+    getAllCourses: builder.query({
+      query: () => ({
+        url: "/allCourse",
+      }),
+      providesTags:["course"]
+    }),
+    getMyCourses: builder.query({
+      query: () => ({
+        url: "/me",
+      }),
+    }),
+    createCourse: builder.mutation({
+      query: (course) => ({
+        url: "/create",
+        body: course,
+        method: "POST",
+      }),
+      invalidatesTags:["course"],
+      onQueryStarted: async (arg, { queryFulfilled }) => {
+        try {
+          const { data } = await queryFulfilled; // ✅ no parentheses
+          toast.success("Course created");
+          // do something with data if you need
+        } catch (err) {
+          toast.error("Failed to create course");
+        }
+      },
+    }),
+    getCourseById: builder.query({
+      query: (id) => ({
+        url: `/${id}`,
+      }),
     }),
 
-    endpoints:(builder)=>({
-        getAllCourses:builder.query({
-            query:()=>({
-                url:"/allCourse",
-            })
+    editCourde:builder.mutation({
+        query:({id,data})=>({
+            url:`/${id}`,
+            body:data,
+            method:"PUT"
         }),
-        getMyCourses:builder.query({
-            query:()=>({
-                url:"/me"
-            })
-        }),
-        createCourse:builder.mutation({
-            query:(course)=>({
-                url:"/create",
-                body:course,
-                method:"POST"
-            }),
-           async onQueryStarted(args,{queryFulfilled}){
-            toast.success("course created")
-           }
-        })
+        invalidatesTags:["course"]
     })
-})
+  }),
+});
 
-export const {useGetAllCoursesQuery,useGetMyCoursesQuery,useCreateCourseMutation} = courseApi
+export const {
+  useGetAllCoursesQuery,
+  useGetMyCoursesQuery,
+  useCreateCourseMutation,
+  useGetCourseByIdQuery,
+  useEditCourdeMutation
+} = courseApi;

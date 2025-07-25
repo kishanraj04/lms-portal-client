@@ -16,6 +16,7 @@ const Dashboard = () => {
   const [drawerOpen, setDrawerOpen] = useState(!isMobile);
 
   const handleDrawerToggle = () => setDrawerOpen(!drawerOpen);
+
   useEffect(() => {
     setDrawerOpen(!isMobile);
   }, [isMobile]);
@@ -49,7 +50,11 @@ const Dashboard = () => {
           }}
         >
           {(drawerOpen || !isMobile) && (
-            <LeftDrawer isMobile={isMobile} onClose={handleDrawerToggle} setDrawerOpen={setDrawerOpen}/>
+            <LeftDrawer
+              isMobile={isMobile}
+              onClose={handleDrawerToggle}
+              setDrawerOpen={setDrawerOpen}
+            />
           )}
         </Box>
 
@@ -60,9 +65,9 @@ const Dashboard = () => {
             bgcolor: "#121212",
             position: "relative",
             overflow: "hidden",
-            minWidth: 0, // prevents overflow due to children
+            minWidth: 0,
           }}
-         >
+        >
           {/* Toggle button for mobile */}
           {isMobile && !drawerOpen && (
             <IconButton
@@ -70,9 +75,10 @@ const Dashboard = () => {
               sx={{
                 color: "white",
                 position: "absolute",
-                top: 16,
+                top: 10,
                 left: 16,
                 zIndex: 1200,
+                width: "auto", // ✅ prevent full width
               }}
             >
               <MenuIcon />
@@ -84,16 +90,14 @@ const Dashboard = () => {
             sx={{
               height: "100%",
               overflowY: "auto",
-              overflowX: "hidden", // ✅ prevent horizontal scroll
+              overflowX: "hidden",
               padding: theme.spacing(2),
               color: "white",
               minWidth: 0,
-
-              // Hide scrollbars
-              scrollbarWidth: "none", // Firefox
-              msOverflowStyle: "none", // IE 10+
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
               "&::-webkit-scrollbar": {
-                width: "0px",
+                width: 0,
                 background: "transparent",
               },
               "&::-webkit-scrollbar-thumb": {
