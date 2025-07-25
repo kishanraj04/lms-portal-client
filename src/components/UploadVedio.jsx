@@ -10,31 +10,62 @@ import {
   CardMedia,
   Divider,
   Paper,
+  Switch,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { useParams } from "react-router-dom";
+import { useUploadLectureMutation } from "../store/api/courseApi";
+import { toast } from "react-toastify";
 
 const UploadLecturePage = () => {
-  const [lectureTitle, setLectureTitle] = useState("");
-  const [videoFile, setVideoFile] = useState(null);
-  const [uploadedLectures, setUploadedLectures] = useState([]);
+  const { id } = useParams();
+  const [uploadLectureAPi,uploadLectureApiResp] = useUploadLectureMutation()
+  const [lectureData, setLectureData] = useState({
+    lectureTitle: "",
+    lectureVedio: "",
+    isFree: false,
+  });
+
+  const handleChange = (event) => {
+    const { name, value, type, checked } = event.target;
+    const newValue = type === "checkbox" ? checked : value;
+
+    setLectureData((prev) => ({
+      ...prev,
+      [name]: newValue,
+    }));
+  };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    setVideoFile(file);
+
+    setLectureData((prev) => ({
+      ...prev,
+      lectureVedio: file,
+    }));
   };
 
-  const handleSubmit = () => {
-    if (!lectureTitle || !videoFile) return;
+  const handleSubmit = async() => {
+    const { lectureTitle, lectureVedio, isFree } = lectureData;
 
-    const newLecture = {
-      title: lectureTitle,
-      videoUrl: URL.createObjectURL(videoFile),
-    };
+    if (!lectureTitle || !lectureVedio) return toast.error("All fields required!");
 
-    setUploadedLectures((prev) => [newLecture, ...prev]);
-    setLectureTitle("");
-    setVideoFile(null);
+    const formData = new FormData();
+    formData.append("title", lectureData?.lectureTitle);
+    formData.append("lectureVedio", lectureData?.lectureVedio);
+    formData.append("isFree", lectureData?.isFree);
+  
+    const resp = await uploadLectureAPi({id,formData})
+    console.log(resp);
+    // console.log("Submitting:", {
+    //   title: lectureTitle,
+    //   video: lectureVedio,
+    //   isFree,
+    // });
+
   };
+
+  console.log(lectureData?.lectureVedio);
 
   return (
     <Box sx={{ maxWidth: 650, mx: "auto" }}>
@@ -60,11 +91,12 @@ const UploadLecturePage = () => {
           {/* Lecture Title */}
           <TextField
             label="Lecture Title"
-            placeholder="Enter lecture name (e.g. Introduction to Graphs)"
+            placeholder="Enter lecture name"
             variant="outlined"
+            name="lectureTitle"
             fullWidth
-            value={lectureTitle}
-            onChange={(e) => setLectureTitle(e.target.value)}
+            value={lectureData?.lectureTitle}
+            onChange={handleChange}
             sx={{
               "& .MuiInputBase-input::placeholder": {
                 color: "gray",
@@ -72,7 +104,6 @@ const UploadLecturePage = () => {
               },
               "& .MuiOutlinedInput-root": {
                 color: "white", // text color
-                borderColor: "white",
                 "& fieldset": {
                   borderColor: "white", // default border
                 },
@@ -99,30 +130,43 @@ const UploadLecturePage = () => {
               startIcon={<CloudUploadIcon />}
               component="label"
             >
-              {videoFile ? "Change Video" : "Select Video"}
+              {lectureData?.lectureVedio ? "Change Video" : "Select Video"}
               <input
                 type="file"
                 accept="video/*"
+                name="lectureVedio"
                 hidden
                 onChange={handleFileChange}
               />
             </Button>
-
-            {videoFile && (
+            <Switch
+              name="isFree"
+              checked={lectureData?.isFree}
+              onChange={handleChange}
+              sx={{
+                "& .MuiSwitch-switchBase.Mui-checked": {
+                  color: "#4caf50",
+                },
+                "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                  backgroundColor: "#4caf50",
+                },
+              }}
+            />
+            {lectureData?.lectureVedio && (
               <Typography variant="body2" color="text.secondary">
-                {videoFile?.name}
+                {lectureData?.lectureVedio?.name}
               </Typography>
             )}
           </Stack>
 
           {/* Video Preview */}
-          {videoFile && (
+          {lectureData?.lectureVedio && (
             <video
               width="100%"
               height="240"
               controls
               style={{ borderRadius: 10, marginTop: 8 }}
-              src={URL.createObjectURL(videoFile)}
+              src={URL.createObjectURL(lectureData?.lectureVedio)}
             />
           )}
 
@@ -132,7 +176,7 @@ const UploadLecturePage = () => {
             size="large"
             color="primary"
             sx={{
-                backgroundColor:"black",
+              backgroundColor: "black",
               "& .MuiInputBase-input::placeholder": {
                 color: "gray",
                 opacity: 1,
@@ -157,7 +201,6 @@ const UploadLecturePage = () => {
                 color: "white", // label color
               },
             }}
-            
             onClick={handleSubmit}
           >
             Upload Lecture
@@ -166,18 +209,18 @@ const UploadLecturePage = () => {
       </Paper>
 
       {/* Uploaded Lectures */}
-      <Box sx={{marginTop:7}}>
+      <Box sx={{ marginTop: 7 }}>
         <Typography variant="h6" fontWeight={600} mb={2}>
           🎬 Uploaded Lectures
         </Typography>
 
-        {uploadedLectures.length === 0 ? (
+        {/* {uploadedLectures?.length === 0 ? (
           <Typography variant="body2" color="white">
             No lectures uploaded yet. Start by uploading one above!
           </Typography>
         ) : (
           <Stack spacing={3}>
-            {uploadedLectures.map((lecture, index) => (
+            {uploadedLectures?.map((lecture, index) => (
               <Card key={index} sx={{ borderRadius: 2, boxShadow: 3 }}>
                 <CardMedia
                   component="video"
@@ -187,13 +230,13 @@ const UploadLecturePage = () => {
                 />
                 <CardContent>
                   <Typography variant="subtitle1" fontWeight={600}>
-                    {lecture.title}
+                    {lecture?.title}
                   </Typography>
                 </CardContent>
               </Card>
             ))}
           </Stack>
-        )}
+        )} */}
       </Box>
     </Box>
   );

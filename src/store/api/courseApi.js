@@ -50,6 +50,14 @@ export const courseApi = createApi({
             method:"PUT"
         }),
         invalidatesTags:["course"]
+    }),
+
+    uploadLecture:builder.mutation({
+      query:({id,formData})=>({
+        url:`/upload/lecture/${id}`,
+        body:formData,
+        method:"POST"
+      })
     })
   }),
 });
@@ -59,5 +67,6 @@ export const {
   useGetMyCoursesQuery,
   useCreateCourseMutation,
   useGetCourseByIdQuery,
-  useEditCourdeMutation
+  useEditCourdeMutation,
+  useUploadLectureMutation
 } = courseApi;
