@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { toast } from "react-toastify";
 export const courseApi = createApi({
   reducerPath: "courseApi",
-  tagTypes:["course"],
+  tagTypes:["course","lecture"],
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:3000/api/v1/course/",
     credentials: "include",
@@ -57,7 +57,25 @@ export const courseApi = createApi({
         url:`/upload/lecture/${id}`,
         body:formData,
         method:"POST"
-      })
+      }),
+      invalidatesTags:["lecture"]
+    }),
+
+    getLectureVedioInstructor:builder.query({
+      query:(courseId)=>({
+        url:`/getlecture/instructor/${courseId}`,
+        method:"GET"
+      }),
+      providesTags:["lecture"]
+    }),
+
+    deleteLecture:builder.mutation({
+      query:({lectureId,public_id})=>({
+        url:`/delete/lecture/${lectureId}`,
+        method:"DELETE",
+        body:{public_id}
+      }),
+      invalidatesTags:["lecture"]
     })
   }),
 });
@@ -68,5 +86,7 @@ export const {
   useCreateCourseMutation,
   useGetCourseByIdQuery,
   useEditCourdeMutation,
-  useUploadLectureMutation
+  useUploadLectureMutation,
+  useGetLectureVedioInstructorQuery,
+  useDeleteLectureMutation
 } = courseApi;
