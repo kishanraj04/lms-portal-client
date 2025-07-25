@@ -17,6 +17,7 @@ const ProtectedRoute = () => {
         const res = await axios.get("http://localhost:3000/api/v1/user/directlogin", {
           withCredentials: true,
         });
+        console.log(res?.data?.user);
         if (res?.data?.success) {
           dispatch(setUser(res?.data.user));
           navigate("/");

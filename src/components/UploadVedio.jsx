@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   TextField,
@@ -11,6 +11,7 @@ import {
   Divider,
   Paper,
   Switch,
+  CircularProgress,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useParams } from "react-router-dom";
@@ -25,6 +26,15 @@ const UploadLecturePage = () => {
     lectureVedio: "",
     isFree: false,
   });
+
+  useEffect(()=>{
+    if(uploadLectureApiResp?.isSuccess){
+      toast.success("lecture uploaded")
+    }
+    else if(uploadLectureApiResp?.isError){
+      toast.error(uploadLectureApiResp?.error)
+    }
+  },[uploadLectureApiResp])
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -49,14 +59,14 @@ const UploadLecturePage = () => {
     const { lectureTitle, lectureVedio, isFree } = lectureData;
 
     if (!lectureTitle || !lectureVedio) return toast.error("All fields required!");
-
+    console.log(lectureData?.lectureVedio);
     const formData = new FormData();
     formData.append("title", lectureData?.lectureTitle);
     formData.append("lectureVedio", lectureData?.lectureVedio);
     formData.append("isFree", lectureData?.isFree);
   
     const resp = await uploadLectureAPi({id,formData})
-    console.log(resp);
+    console.log("resp ",resp);
     // console.log("Submitting:", {
     //   title: lectureTitle,
     //   video: lectureVedio,
@@ -203,7 +213,7 @@ const UploadLecturePage = () => {
             }}
             onClick={handleSubmit}
           >
-            Upload Lecture
+            {uploadLectureApiResp?.isLoading?<CircularProgress size={20}/>:"Upload Lecture"}
           </Button>
         </Stack>
       </Paper>

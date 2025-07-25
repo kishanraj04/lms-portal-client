@@ -25,7 +25,7 @@ import {
   useGetProfileQuery,
   useLazyLogoutUserQuery,
 } from "../store/api/userApi";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const settingsWithIcons = [
   { name: "Home", icon: <Home fontSize="small" /> },
@@ -41,8 +41,9 @@ function Header() {
   const navigate = useNavigate();
   const [logoutUser] = useLazyLogoutUserQuery();
   const dispatch = useDispatch();
-  const { data: user } = useGetProfileQuery();
-
+  const { data: user } = useGetProfileQuery(undefined,{refetchOnMountOrArgChange:true});
+  // const {user} = useSelector((state)=>state?.user,{})
+  // console.log(user);
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
