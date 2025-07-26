@@ -86,9 +86,10 @@ export const courseApi = createApi({
     }),
 
     updateLecture:builder.mutation({
-      query:(lectureData)=>({
-        url:"/lecture/update",
-        body:lectureData
+      query:({lectureId,formData})=>({
+        url:`/updata/lecture/${lectureId}`,
+        method:"PUT",
+        body:formData
       })
     })
   }),

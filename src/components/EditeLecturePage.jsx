@@ -18,16 +18,14 @@ import { toast } from "react-toastify";
 
 const EditLecturePage = () => {
   const {lectureId} = useLocation().state
-
   const [formState, setFormState] = useState({
     lectureTitle: "",
     isFree: false,
     lectureVedio: null,
   });
 
-  const { data: lectureData, isLoading } = useGetSingleLectureQuery(lectureId);
+  const { data: lectureData, isLoading } = useGetSingleLectureQuery(lectureId,{refetchOnMountOrArgChange:true});
   const [updateLecture, updateResp] = useUpdateLectureMutation();
-  console.log(lectureData);
   useEffect(() => {
     if (lectureData) {
       setFormState({
@@ -37,6 +35,15 @@ const EditLecturePage = () => {
       });
     }
   }, [lectureData]);
+
+  useEffect(()=>{
+    if(updateResp?.isSuccess){
+      toast.success("lecture updated")
+    }
+    else if(updateResp?.isError){
+      toast.error(updateResp?.error)
+    }
+  },[updateResp])
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -53,12 +60,13 @@ const EditLecturePage = () => {
     }));
   };
 
-  const handleSubmit = async () => {
+  const henadleEditLecture = async () => {
     const { lectureTitle, isFree, lectureVedio } = formState;
 
     if (!lectureTitle) return toast.error("Lecture title is required");
 
     const formData = new FormData();
+    formData.append("lectureId",lectureData?._id)
     formData.append("title", lectureTitle);
     formData.append("isFree", isFree);
     if (lectureVedio) {
@@ -67,12 +75,10 @@ const EditLecturePage = () => {
 
     try {
       const res = await updateLecture({ lectureId, formData });
-      if (res?.data) toast.success("Lecture updated successfully!");
     } catch (err) {
       toast.error("Failed to update lecture");
     }
   };
-  console.log(lectureData?.lecture?.lectureTitle);
   if (isLoading) return <CircularProgress />;
 
   return (
@@ -93,7 +99,9 @@ const EditLecturePage = () => {
           <TextField
             placeholder="Enter lecture title"
             variant="outlined"
-            value={lectureData?.lecture?.lectureTitle}
+            name="lectureTitle"
+            onChange={handleChange}
+            value={formState?.lectureTitle}
             fullWidth
             sx={{
               "& .MuiOutlinedInput-root": {
@@ -161,7 +169,7 @@ const EditLecturePage = () => {
 
           <Button
             variant="outlined"
-            onClick={handleSubmit}
+            onClick={henadleEditLecture}
             disabled={updateResp?.isLoading}
             sx={{backgroundColor:"gray" , color:"black" , font:"bold"}}
           >
