@@ -14,9 +14,9 @@ import {
   CircularProgress,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-
+import EditIcon from "@mui/icons-material/Edit";
 import {
   useDeleteLectureMutation,
   useGetLectureVedioInstructorQuery,
@@ -35,30 +35,28 @@ const UploadLecturePage = () => {
   } = useGetLectureVedioInstructorQuery(id, {
     refetchOnMountOrArgChange: true,
   });
-  const [deleteLectureApi,deleteLectureResp] = useDeleteLectureMutation()
+  const [deleteLectureApi, deleteLectureResp] = useDeleteLectureMutation();
   const [lectureData, setLectureData] = useState({
     lectureTitle: "",
     lectureVedio: "",
     isFree: false,
   });
-
+  const navigate = useNavigate()
   useEffect(() => {
     if (uploadLectureApiResp?.isSuccess) {
       toast.success("lecture uploaded");
     } else if (uploadLectureApiResp?.isError) {
       toast.error(uploadLectureApiResp?.error);
     }
-   
   }, [uploadLectureApiResp]);
 
-  useEffect(()=>{
-      if(deleteLectureResp?.isError){
-      toast.error(deleteLectureResp?.error)
+  useEffect(() => {
+    if (deleteLectureResp?.isError) {
+      toast.error(deleteLectureResp?.error);
+    } else if (deleteLectureResp?.isSuccess) {
+      toast.success("lecture deleted");
     }
-    else if(deleteLectureResp?.isSuccess){
-      toast.success("lecture deleted")
-    }
-  },[deleteLectureResp])
+  }, [deleteLectureResp]);
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -244,69 +242,86 @@ const UploadLecturePage = () => {
         </Typography>
 
         <Stack spacing={1}>
-          {instructorLecture?.lectures?.length==0? "No lectures uploaded yet. Start by uploading one above!":instructorLecture?.lectures?.map((lecture) => (
-            <Card
-              key={lecture?._id}
-              sx={{
-                p: 1,
-                borderRadius: 2,
-                backgroundColor: "#1e1e1e",
-                color: "white",
-              }}
-            >
-              <Stack direction="row" alignItems="center" spacing={4}>
-                {/* Circular video preview */}
-                <a
-                  href={lecture?.vedio?.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
+          {instructorLecture?.lectures?.length == 0
+            ? "No lectures uploaded yet. Start by uploading one above!"
+            : instructorLecture?.lectures?.map((lecture) => (
+                <Card
+                  key={lecture?._id}
+                  sx={{
+                    p: 1,
+                    borderRadius: 2,
+                    backgroundColor: "#1e1e1e",
+                    color: "white",
+                  }}
                 >
-                  <Box
-                    sx={{
-                      width: 30,
-                      height: 30,
-                      overflow: "hidden",
-                      borderRadius: "50%",
-                      border: "2px solid white",
-                    }}
-                  >
-                    <video
-                      src={lecture?.vedio?.url}
-                      muted
-                      autoPlay={false}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                    />
-                  </Box>
-                </a>
+                  <Stack direction="row" alignItems="center" spacing={4}>
+                    {/* Circular video preview */}
+                    <a
+                      href={lecture?.vedio?.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Box
+                        sx={{
+                          width: 30,
+                          height: 30,
+                          overflow: "hidden",
+                          borderRadius: "50%",
+                          border: "2px solid white",
+                        }}
+                      >
+                        <video
+                          src={lecture?.vedio?.url}
+                          muted
+                          autoPlay={false}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                        />
+                      </Box>
+                    </a>
 
-                {/* Title & Delete icon */}
-                <Box flexGrow={1}>
-                  <Typography variant="subtitle1" fontWeight={600}>
-                    {lecture?.lectureTitle}
-                  </Typography>
-                </Box>
+                    {/* Title & Delete icon */}
+                    <Box flexGrow={1}>
+                      <Typography variant="subtitle1" fontWeight={600}>
+                        {lecture?.lectureTitle}
+                      </Typography>
+                    </Box>
 
-                {/* Delete icon */}
-                <Button
-                  variant="text"
-                  color="error"
-                  onClick={async() =>
-                    await deleteLectureApi({lectureId:lecture?._id,public_id: lecture?.vedio?.public_id})
-                  }
-                >
-                   {
-                    deleteLectureResp?.isLoading?<CircularProgress size={20}/>: <DeleteForeverIcon />
-                   }
-                </Button>
-              </Stack>
-            </Card>
-          ))}
+                    <Box>
+                      <Stack direction="row">
+                        <Button
+                          variant="text"
+                          color="error"
+                          onClick={async () =>
+                            await deleteLectureApi({
+                              lectureId: lecture?._id,
+                              public_id: lecture?.vedio?.public_id,
+                            })
+                          }
+                        >
+                          {deleteLectureResp?.isLoading ? (
+                            <CircularProgress size={20} />
+                          ) : (
+                            <DeleteForeverIcon />
+                          )}
+                        </Button>
+
+                        <Button
+                          variant="text"
+                          color="primary"
+                          onClick={() =>navigate(`lecture/update`,{state:{lectureId:lecture?._id}})}
+                        >
+                          <EditIcon />
+                        </Button>
+                      </Stack>
+                    </Box>
+                  </Stack>
+                </Card>
+              ))}
         </Stack>
-
       </Box>
     </Box>
   );

@@ -76,6 +76,20 @@ export const courseApi = createApi({
         body:{public_id}
       }),
       invalidatesTags:["lecture"]
+    }),
+
+    getSingleLecture:builder.query({
+      query:(lectureId)=>({
+        url:`/lecture/${lectureId}`,
+        method:"GET"
+      })
+    }),
+
+    updateLecture:builder.mutation({
+      query:(lectureData)=>({
+        url:"/lecture/update",
+        body:lectureData
+      })
     })
   }),
 });
@@ -88,5 +102,7 @@ export const {
   useEditCourdeMutation,
   useUploadLectureMutation,
   useGetLectureVedioInstructorQuery,
-  useDeleteLectureMutation
+  useDeleteLectureMutation,
+  useGetSingleLectureQuery,
+  useUpdateLectureMutation
 } = courseApi;
