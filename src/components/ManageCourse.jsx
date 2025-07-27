@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Typography,
@@ -17,14 +17,22 @@ import {
   Tooltip,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import { useGetMyCoursesQuery } from "../store/api/courseApi";
+import { useGetMyCoursesQuery, useMakeCoursePublicMutation } from "../store/api/courseApi";
 import EditIcon from "@mui/icons-material/Edit";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import { toast } from "react-toastify";
 
 const ManageCourseTable = () => {
   const { data: myCourses } = useGetMyCoursesQuery();
+  const [makeCoursePublicApi,makeCoursePublicResp] = useMakeCoursePublicMutation()
   const courses = myCourses?.myCourses || [];
+
+  useEffect(()=>{
+    if(makeCoursePublicResp?.isError){
+      toast.error(makeCoursePublicResp?.error)
+    }
+  },[makeCoursePublicResp])
 
   return (
     <Box
@@ -54,22 +62,6 @@ const ManageCourseTable = () => {
         >
           Manage Courses
         </Typography>
-        <Link
-          component={RouterLink}
-          to="/lectures"
-          underline="none"
-          sx={{
-            fontSize: "15px",
-            fontWeight: "bold",
-            color: "#1976d2",
-            "&:hover": {
-              color: "#1565c0",
-              textDecoration: "none",
-            },
-          }}
-        >
-          Go Lectures
-        </Link>
       </Box>
 
       {/* Table View */}
@@ -101,8 +93,8 @@ const ManageCourseTable = () => {
           </TableHead>
 
           <TableBody>
-            {courses.map((course) => (
-              <TableRow key={course._id}>
+            {courses?.length==0 ? "nothing" :courses.map((course) => (
+              <TableRow key={course?._id}>
                 <TableCell>
                   <Box
                     sx={{
@@ -126,8 +118,8 @@ const ManageCourseTable = () => {
                   </Box>
                 </TableCell>
 
-                <TableCell sx={{ color: "white" }}>{course.title}</TableCell>
-                <TableCell sx={{ color: "white" }}>₹{course.price}</TableCell>
+                <TableCell sx={{ color: "white" }}>{course?.title}</TableCell>
+                <TableCell sx={{ color: "white" }}>₹{course?.price}</TableCell>
                 <TableCell>
                   <Stack direction="row" spacing={1}>
                     {/* Edit Icon */}
@@ -136,9 +128,9 @@ const ManageCourseTable = () => {
                       to={`${course?._id}`}
                       sx={{
                         color: "white",
-                        backgroundColor: "#e53935", // red
+                        backgroundColor: "#aa8f05ff", // red
                         "&:hover": {
-                          backgroundColor: "#c62828", // dark red
+                          backgroundColor: "#8b8108ff", // dark red
                         },
                       }}
                     >
@@ -146,8 +138,9 @@ const ManageCourseTable = () => {
                     </IconButton>
 
                     {/* Published Icon */}
-                    <Tooltip title="Published">
-                      <IconButton
+                    <Tooltip title={`${course?.isPublish?"Published":"un Publish"}`}>
+                      {
+                        course?.isPublish?<IconButton
                         sx={{
                           color: "white",
                           backgroundColor: "#43a047", // green
@@ -156,8 +149,26 @@ const ManageCourseTable = () => {
                           },
                         }}
                       >
-                        <CheckCircleIcon />
+                        <CheckCircleIcon onClick={async()=>{
+                          const resp = await makeCoursePublicApi({courseId:course?._id,isPublish:false})
+                          if(resp?.data?.success) toast.success("course unpublish")
+                          
+                        }}/>
+                      </IconButton>:<IconButton
+                        sx={{
+                          color: "white",
+                          backgroundColor: "#d20a17ff", // green
+                          "&:hover": {
+                            backgroundColor: "#820606ff", // dark green
+                          },
+                        }}
+                      >
+                        <CheckCircleIcon onClick={async()=>{
+                          const resp = await makeCoursePublicApi({courseId:course?._id,isPublish:true})
+                           if(resp?.data?.success) toast.success("course publish")
+                        }}/>
                       </IconButton>
+                      }
                     </Tooltip>
 
                     {/* Upload Icon */}

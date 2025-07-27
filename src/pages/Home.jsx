@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, darkScrollbar, Grid } from "@mui/material";
+import { Box, darkScrollbar, Grid, Typography } from "@mui/material";
 import Carousel from "../components/Crousal";
 import Courses from "../components/Courses";
 import SearchBar from "../components/SearchBar";
@@ -23,7 +23,9 @@ function Home() {
           justifyContent="center"
           sx={{ px: { xs: 2, md: 4 }, py: 4 }}
         >
-          {courses?.message?.map((course) => (
+          {
+          courses?.message?.length==0 ? <Typography variant="h4" marginTop={15} fontWeight={"bold"}>No Course Publis Yet</Typography> :
+          courses?.message?.map((course) => (
             <Courses key={course._id} course={course} />
           ))}
         </Grid>

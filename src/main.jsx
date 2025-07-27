@@ -18,6 +18,7 @@ import Learning from "./pages/Learning.jsx";
 import Profile from "./pages/Profile.jsx";
 import { store } from "./store/configureStore.js";
 import EditLecturePage from "./components/EditeLecturePage.jsx";
+import CourseDetail from "./pages/CourseDetail.jsx";
 const route = createBrowserRouter([
   {
     path: "/auth",
@@ -38,6 +39,10 @@ const route = createBrowserRouter([
       {
         path: "/learning",
         element: <Learning />,
+      },
+      {
+        path:"/course/detail/:courseId",
+        element:<CourseDetail/>
       },
       {
         path: "/dashboard",

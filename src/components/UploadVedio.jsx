@@ -244,7 +244,7 @@ const UploadLecturePage = () => {
         <Stack spacing={1}>
           {instructorLecture?.lectures?.length == 0
             ? "No lectures uploaded yet. Start by uploading one above!"
-            : instructorLecture?.lectures?.map((lecture) => (
+            : instructorLecture?.lectures?.map((lecture,idx) => (
                 <Card
                   key={lecture?._id}
                   sx={{
@@ -256,6 +256,10 @@ const UploadLecturePage = () => {
                 >
                   <Stack direction="row" alignItems="center" spacing={4}>
                     {/* Circular video preview */}
+
+                    <Typography>
+                      Lecture{idx+1}
+                    </Typography>
                     <a
                       href={lecture?.vedio?.url}
                       target="_blank"

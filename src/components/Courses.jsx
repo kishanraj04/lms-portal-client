@@ -9,21 +9,22 @@ import {
   Chip,
   Stack,
   Avatar,
+  Link,
 } from "@mui/material";
-
+import { Link as RouterLink } from "react-router-dom";
 const Courses = ({ course }) => {
   return (
     <Grid item>
-  <Card
-    elevation={2}
-    sx={{
-      borderRadius: 2,
-      width: 300, // fixed width
-      display: "flex",
-      flexDirection: "column",
-      height: "100%",
-    }}
-  >
+      <Card
+        elevation={2}
+        sx={{
+          borderRadius: 2,
+          width: 300, // fixed width
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+        }}
+      >
         <CardMedia
           component="img"
           height="180"
@@ -32,13 +33,18 @@ const Courses = ({ course }) => {
         />
 
         <CardContent sx={{ p: 2, flexGrow: 1 }}>
-          <Typography variant="subtitle1" fontWeight={600}>
+          <Typography
+            variant="subtitle1"
+            fontWeight={600}
+            component={RouterLink}
+            to={`/course/detail/${course?._id}`}
+          >
             {course?.title}
           </Typography>
 
-          <Typography variant="body2" color="text.secondary" gutterBottom>
+          {/* <Typography variant="body2" color="text.secondary" gutterBottom>
             {course?.description}
-          </Typography>
+          </Typography> */}
 
           <Stack direction="row" spacing={1} alignItems="center" mt={1}>
             <Typography variant="subtitle1" color="primary">
@@ -63,7 +69,11 @@ const Courses = ({ course }) => {
           px={2}
           pb={2}
           pt={0}
-          sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <Avatar
@@ -82,6 +92,5 @@ const Courses = ({ course }) => {
     </Grid>
   );
 };
-
 
 export default Courses;

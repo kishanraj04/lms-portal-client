@@ -19,6 +19,7 @@ export const courseApi = createApi({
       query: () => ({
         url: "/me",
       }),
+      providesTags:["course"]
     }),
     createCourse: builder.mutation({
       query: (course) => ({
@@ -91,6 +92,15 @@ export const courseApi = createApi({
         method:"PUT",
         body:formData
       })
+    }),
+
+    makeCoursePublic:builder.mutation({
+      query:({courseId,isPublish})=>({
+        url:`/publishthecourse/${courseId}`,
+        body:{isPublish:isPublish},
+        method:"PUT"
+      }),
+      invalidatesTags:["course"]
     })
   }),
 });
@@ -105,5 +115,6 @@ export const {
   useGetLectureVedioInstructorQuery,
   useDeleteLectureMutation,
   useGetSingleLectureQuery,
-  useUpdateLectureMutation
+  useUpdateLectureMutation,
+  useMakeCoursePublicMutation
 } = courseApi;

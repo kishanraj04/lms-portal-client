@@ -9,13 +9,13 @@ import {
   CircularProgress,
   Paper,
 } from "@mui/material";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   useGetSingleLectureQuery,
   useUpdateLectureMutation,
 } from "../store/api/courseApi";
 import { toast } from "react-toastify";
-
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 const EditLecturePage = () => {
   const {lectureId} = useLocation().state
   const [formState, setFormState] = useState({
@@ -26,6 +26,7 @@ const EditLecturePage = () => {
 
   const { data: lectureData, isLoading } = useGetSingleLectureQuery(lectureId,{refetchOnMountOrArgChange:true});
   const [updateLecture, updateResp] = useUpdateLectureMutation();
+  const navigate = useNavigate()
   useEffect(() => {
     if (lectureData) {
       setFormState({
@@ -52,7 +53,7 @@ const EditLecturePage = () => {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
-
+  console.log(lectureId);
   const handleFileChange = (e) => {
     setFormState((prev) => ({
       ...prev,
@@ -91,9 +92,15 @@ const EditLecturePage = () => {
           color: "white",
         }}
       >
-        <Typography variant="h6" mb={2}>
+        <Box sx={{display:"flex",justifyContent:"space-between"}}>
+          <Typography variant="h6" mb={2}>
           ✏️ Edit Lecture
         </Typography>
+
+        <Typography variant="h6" mb={2}>
+          <ArrowBackIcon onClick={()=>navigate(-1)}/>
+        </Typography>
+        </Box>
 
         <Stack spacing={3}>
           <TextField

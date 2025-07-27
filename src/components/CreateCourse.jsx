@@ -56,6 +56,16 @@ const CreateCourse = () => {
     if(creatCourseResp?.isError){
       toast.error(creatCourseResp?.error)
     }
+    else if(creatCourseResp?.isSuccess){
+      setFormData({
+    title: "",
+    price: "",
+    discountPrice: "",
+    description: "",
+    courselevel: "basic",
+    thumbnail: null,
+  })
+    }
   },[creatCourseResp])
 
   return (
