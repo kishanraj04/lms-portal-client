@@ -101,6 +101,14 @@ export const courseApi = createApi({
         method:"PUT"
       }),
       invalidatesTags:["course"]
+    }),
+
+    makeCheckoutSession:builder.mutation({
+      query:(courseId)=>({
+        url:"/checkout/create-checkout-session",
+        body:{courseId},
+        method:"POST"
+      })
     })
   }),
 });
@@ -116,5 +124,6 @@ export const {
   useDeleteLectureMutation,
   useGetSingleLectureQuery,
   useUpdateLectureMutation,
-  useMakeCoursePublicMutation
+  useMakeCoursePublicMutation,
+  useMakeCheckoutSessionMutation
 } = courseApi;

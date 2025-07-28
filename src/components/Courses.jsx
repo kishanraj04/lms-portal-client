@@ -38,13 +38,14 @@ const Courses = ({ course }) => {
             fontWeight={600}
             component={RouterLink}
             to={`/course/detail/${course?._id}`}
+            sx={{textDecoration:"none"}}
           >
             {course?.title}
           </Typography>
 
-          {/* <Typography variant="body2" color="text.secondary" gutterBottom>
-            {course?.description}
-          </Typography> */}
+          <Typography variant="body2" color="text.secondary" gutterBottom>
+            {course?.subTitle}
+          </Typography>
 
           <Stack direction="row" spacing={1} alignItems="center" mt={1}>
             <Typography variant="subtitle1" color="primary">

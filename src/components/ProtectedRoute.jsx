@@ -1,6 +1,6 @@
 // src/components/ProtectedRoute.jsx
 import React, { useEffect, useState } from "react";
-import { Navigate, Outlet, useNavigate } from "react-router-dom";
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import App from "../App";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
@@ -10,6 +10,7 @@ const ProtectedRoute = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [isLoading,setIsLoading] = useState(false)
+   const {pathname} = useLocation()
    useEffect(() => {
     (async () => {
       try {
@@ -17,10 +18,10 @@ const ProtectedRoute = () => {
         const res = await axios.get("http://localhost:3000/api/v1/user/directlogin", {
           withCredentials: true,
         });
-        console.log(res?.data?.user);
+        // console.log(res?.data?.user);
         if (res?.data?.success) {
           dispatch(setUser(res?.data.user));
-          navigate("/");
+          navigate(pathname);
           setIsLoading(false)
         }
       } catch (err) {

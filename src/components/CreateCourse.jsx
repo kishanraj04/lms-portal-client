@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 const CreateCourse = () => {
   const [formData, setFormData] = useState({
     title: "",
+    subTitle:"",
     price: "",
     discountPrice: "",
     description: "",
@@ -59,6 +60,7 @@ const CreateCourse = () => {
     else if(creatCourseResp?.isSuccess){
       setFormData({
     title: "",
+    subTitle:"",
     price: "",
     discountPrice: "",
     description: "",
@@ -134,7 +136,33 @@ const CreateCourse = () => {
               }}
               sx={{ input: { color: "white" }, borderRadius: 2 }}
             />
-
+            <TextField
+              label="Sub Title"
+              name="subTitle"
+              value={formData?.subTitle}
+              onChange={handleChange}
+              fullWidth
+              required
+              placeholder="Enter course title"
+              variant="outlined"
+              InputProps={{
+                sx: {
+                  color: "white",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "white",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#90caf9",
+                  },
+                },
+              }}
+              InputLabelProps={{
+                sx: {
+                  color: "white",
+                },
+              }}
+              sx={{ input: { color: "white" }, borderRadius: 2 }}
+            />
             <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
               {["price", "discountPrice"].map((field, i) => (
                 <TextField

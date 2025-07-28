@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Typography,
@@ -9,9 +9,32 @@ import {
   Grid,
   Divider,
   Paper,
+  CircularProgress,
 } from "@mui/material";
+import { useLocation, useParams } from "react-router-dom";
+import { useMakeCheckoutSessionMutation } from "../store/api/courseApi";
+import { toast } from "react-toastify";
 
 export default function CourseDetail() {
+
+    const {courseId} = useParams()
+    const [createCheckoutSessionApi,createCheckOutResp] = useMakeCheckoutSessionMutation()
+    
+    const courseCheckoutHandler = async()=>{
+        const resp = await createCheckoutSessionApi(courseId)
+    }
+
+    useEffect(()=>{
+        if(createCheckOutResp?.data?.url){
+            window.location.href = createCheckOutResp?.data?.url
+        }else{
+            toast.error(createCheckOutResp?.error)
+        }
+        if(createCheckOutResp?.isError){
+            toast.error(createCheckOutResp?.error)
+        }
+    },[createCheckOutResp])
+
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
       {/* Header Section */}
@@ -65,9 +88,13 @@ export default function CourseDetail() {
               <Typography variant="h6" sx={{ mt: 1 }}>
                 239₹
               </Typography>
-              <Button variant="contained" color="secondary" fullWidth sx={{ mt: 2 }}>
+              {
+                !createCheckOutResp?.isLoading?<Button variant="contained" color="secondary" fullWidth sx={{ mt: 2 }} onClick={()=>courseCheckoutHandler()}>
                 Buy Course Now
+              </Button>:<Button variant="contained" color="secondary" fullWidth sx={{ mt: 2 }}>
+                <CircularProgress size={20}/> wait...
               </Button>
+              }
             </CardContent>
           </Card>
         </Box>

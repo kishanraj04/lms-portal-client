@@ -11,16 +11,20 @@ import {
 } from "@mui/material";
 import TiptapEditor from "../common/TipTapEditor";
 import { useParams } from "react-router-dom";
-import { useEditCourdeMutation, useGetCourseByIdQuery } from "../store/api/courseApi";
+import {
+  useEditCourdeMutation,
+  useGetCourseByIdQuery,
+} from "../store/api/courseApi";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 
 const EditCourse = () => {
   const [description, setDescription] = useState("");
   const { id } = useParams();
-  const [editCourseApi,editCourseResp] =  useEditCourdeMutation()
+  const [editCourseApi, editCourseResp] = useEditCourdeMutation();
   const [editData, setEditdata] = useState({
     title: "",
+    subTitle: "",
     description: "",
     price: 0,
     discountPrice: 0,
@@ -31,28 +35,27 @@ const EditCourse = () => {
     isError: isCourseError,
     isLoading: isCourseLoading,
   } = useGetCourseByIdQuery(id);
-
   useEffect(() => {
     if (course) {
       Object.entries(course?.course).forEach(([key, value]) => {
         setEditdata((prev) => ({ ...prev, [key]: value }));
       });
-      setDescription(editData?.description)
+      setDescription(editData?.description);
+     
     }
   }, [course, isCourseError]);
 
-  useEffect(()=>{
-    setEditdata((prev)=>({...prev,description:description}))
-  },[description])
+  useEffect(() => {
+    setEditdata((prev) => ({ ...prev, description: description }));
+  }, [description]);
 
-  useEffect(()=>{
-    if(editCourseResp?.isSuccess){
-      toast.success("course updated")
+  useEffect(() => {
+    if (editCourseResp?.isSuccess) {
+      toast.success("course updated");
+    } else if (editCourseResp?.isError) {
+      toast.error("faild to update");
     }
-    else if(editCourseResp?.isError){
-      toast.error("faild to update")
-    }
-  },[editCourseResp])
+  }, [editCourseResp]);
 
   const textFieldStyles = {
     "& .MuiInputBase-input": {
@@ -82,13 +85,17 @@ const EditCourse = () => {
       opacity: 0.7,
     },
   };
-  const saveEdit = async(e) => {
-    e.preventDefault()
+  const saveEdit = async (e) => {
+    e.preventDefault();
+    console.log(editData);
     try {
-      const resp = await editCourseApi({id:course?.course?._id,data:editData})
+      const resp = await editCourseApi({
+        id: course?.course?._id,
+        data: editData,
+      });
       console.log(resp);
     } catch (error) {
-      toast.error(error?.message)
+      toast.error(error?.message);
     }
   };
   return (
@@ -132,7 +139,20 @@ const EditCourse = () => {
             fullWidth
             sx={textFieldStyles}
             value={editData?.title}
-            onChange={(e)=>setEditdata((prev)=>({...prev,title:e.target?.value}))}
+            onChange={(e) =>
+              setEditdata((prev) => ({ ...prev, title: e.target?.value }))
+            }
+          />
+
+          <TextField
+            label="SubTitle"
+            placeholder="Enter course Subtitle"
+            fullWidth
+            sx={textFieldStyles}
+            value={editData?.subTitle}
+            onChange={(e) =>
+              setEditdata((prev) => ({ ...prev, subTitle: e.target?.value }))
+            }
           />
 
           <TiptapEditor
@@ -145,20 +165,27 @@ const EditCourse = () => {
             label="Price (INR)"
             placeholder="Enter price"
             fullWidth
-              type="number" 
+            type="number"
             sx={textFieldStyles}
             value={editData?.price}
-             onChange={(e)=>setEditdata((prev)=>({...prev,price:e.target?.value}))}
+            onChange={(e) =>
+              setEditdata((prev) => ({ ...prev, price: e.target?.value }))
+            }
           />
 
           <TextField
             label="Discount Price (INR)"
             placeholder="Enter discounted price"
             fullWidth
-              type="number" 
+            type="number"
             sx={textFieldStyles}
             value={editData?.discountPrice}
-             onChange={(e)=>setEditdata((prev)=>({...prev,discountPrice:e.target?.value}))}
+            onChange={(e) =>
+              setEditdata((prev) => ({
+                ...prev,
+                discountPrice: e.target?.value,
+              }))
+            }
           />
 
           <TextField
@@ -166,8 +193,9 @@ const EditCourse = () => {
             label="Course Level"
             name="courseLevel"
             value={editData?.courseLevel?.toLowerCase() || ""}
-
-            onChange={(e)=>setEditdata((prev)=>({...prev,courseLevel:e.target?.value}))}
+            onChange={(e) =>
+              setEditdata((prev) => ({ ...prev, courseLevel: e.target?.value }))
+            }
             fullWidth
             sx={textFieldStyles}
           >
@@ -180,10 +208,13 @@ const EditCourse = () => {
             type="submit"
             variant="contained"
             color="primary"
-            sx={{ mt: 2 , backgroundColor:`${editCourseResp?.isLoading ? "green":"red"}` }}
+            sx={{
+              mt: 2,
+              backgroundColor: `${editCourseResp?.isLoading ? "green" : "red"}`,
+            }}
             onClick={saveEdit}
           >
-            {editCourseResp?.isLoading?"Editing":"Save Edit"}
+            {editCourseResp?.isLoading ? "Editing" : "Save Edit"}
           </Button>
         </Stack>
       </form>

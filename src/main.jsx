@@ -19,6 +19,7 @@ import Profile from "./pages/Profile.jsx";
 import { store } from "./store/configureStore.js";
 import EditLecturePage from "./components/EditeLecturePage.jsx";
 import CourseDetail from "./pages/CourseDetail.jsx";
+import CourseProgress from "./pages/CourseProgress.jsx";
 const route = createBrowserRouter([
   {
     path: "/auth",
@@ -43,6 +44,10 @@ const route = createBrowserRouter([
       {
         path:"/course/detail/:courseId",
         element:<CourseDetail/>
+      },
+      {
+        path:"/course-progress/:courseId",
+        element:<CourseProgress/>
       },
       {
         path: "/dashboard",
