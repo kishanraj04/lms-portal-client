@@ -109,6 +109,13 @@ export const courseApi = createApi({
         body:{courseId},
         method:"POST"
       })
+    }),
+
+    getCourseWithPurchaseStatus:builder.query({
+      query:(courseId)=>({
+        url:`/course/course-purchase-status/${courseId}`,
+        method:"GET"
+      })
     })
   }),
 });
@@ -125,5 +132,6 @@ export const {
   useGetSingleLectureQuery,
   useUpdateLectureMutation,
   useMakeCoursePublicMutation,
-  useMakeCheckoutSessionMutation
+  useMakeCheckoutSessionMutation,
+  useGetCourseWithPurchaseStatusQuery
 } = courseApi;

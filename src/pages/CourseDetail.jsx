@@ -12,31 +12,44 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useLocation, useParams } from "react-router-dom";
-import { useMakeCheckoutSessionMutation } from "../store/api/courseApi";
+import {
+  useGetCourseWithPurchaseStatusQuery,
+  useMakeCheckoutSessionMutation,
+} from "../store/api/courseApi";
 import { toast } from "react-toastify";
 
 export default function CourseDetail() {
+  const { courseId } = useParams();
+  const [createCheckoutSessionApi, createCheckOutResp] =
+    useMakeCheckoutSessionMutation();
+  const { data, respCoursAfterPurchase } = useGetCourseWithPurchaseStatusQuery(
+    courseId,
+    { refetchOnMountOrArgChange: true }
+  );
 
-    const {courseId} = useParams()
-    const [createCheckoutSessionApi,createCheckOutResp] = useMakeCheckoutSessionMutation()
-    
-    const courseCheckoutHandler = async()=>{
-        const resp = await createCheckoutSessionApi(courseId)
+  console.log(data, data?.course?.lectures?.length);
+  const courseCheckoutHandler = async () => {
+    const resp = await createCheckoutSessionApi(courseId);
+  };
+
+  useEffect(() => {
+    if (createCheckOutResp?.data?.url) {
+      window.location.href = createCheckOutResp?.data?.url;
+    } else {
+      toast.error(createCheckOutResp?.error);
     }
-
-    useEffect(()=>{
-        if(createCheckOutResp?.data?.url){
-            window.location.href = createCheckOutResp?.data?.url
-        }else{
-            toast.error(createCheckOutResp?.error)
-        }
-        if(createCheckOutResp?.isError){
-            toast.error(createCheckOutResp?.error)
-        }
-    },[createCheckOutResp])
-
+    if (createCheckOutResp?.isError) {
+      toast.error(createCheckOutResp?.error);
+    }
+  }, [createCheckOutResp]);
   return (
-    <Box sx={{ p: { xs: 2, md: 4 }, backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
+    <Box
+      sx={{
+        p: { xs: 2, md: 4 },
+        backgroundColor: "#f5f5f5",
+        minHeight: "100vh",
+      }}
+    >
       {/* Header Section */}
       <Box
         sx={{
@@ -48,19 +61,19 @@ export default function CourseDetail() {
         }}
       >
         <Typography variant="h4" fontWeight="bold">
-          Mastering Next.js: Full-Stack Web Development
+          {data?.course?.title}
         </Typography>
         <Typography variant="subtitle1" sx={{ mt: 1 }}>
-          Build Scalable, Modern Web Apps with React & Next.js
+          {data?.course?.subTitle}
         </Typography>
         <Typography variant="body2" sx={{ mt: 1 }}>
-          Created By <b>Patel MernStack</b>
+          Created By <b>{data?.course?.creator?.name}</b>
         </Typography>
         <Typography variant="body2" sx={{ mt: 1 }}>
           Last updated: 2024-10-20
         </Typography>
         <Typography variant="body2" sx={{ mt: 1 }}>
-          Students enrolled: 1
+          Students enrolled: {data?.course?.enrolledStudent}
         </Typography>
       </Box>
 
@@ -78,23 +91,36 @@ export default function CourseDetail() {
             <CardMedia
               component="video"
               controls
-              src="/preview.mp4" // Replace with actual video path
+              src={data?.course?.lectures[0]?.vedio?.url}
               sx={{ height: 200 }}
             />
             <CardContent>
               <Typography variant="subtitle1" fontWeight="bold">
-                Introduction to Next.js
+                {data?.course?.title}
               </Typography>
               <Typography variant="h6" sx={{ mt: 1 }}>
-                239₹
+                {data?.course?.price}₹
               </Typography>
-              {
-                !createCheckOutResp?.isLoading?<Button variant="contained" color="secondary" fullWidth sx={{ mt: 2 }} onClick={()=>courseCheckoutHandler()}>
-                Buy Course Now
-              </Button>:<Button variant="contained" color="secondary" fullWidth sx={{ mt: 2 }}>
-                <CircularProgress size={20}/> wait...
-              </Button>
-              }
+              {!data?.purchased ? (
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  fullWidth
+                  sx={{ mt: 2 }}
+                  onClick={() => courseCheckoutHandler()}
+                >
+                  Buy Course Now
+                </Button>
+              ) : (
+                <Button
+                  variant="contained"
+                  color="success"
+                  fullWidth
+                  sx={{ mt: 2 }}
+                >
+                  Continue
+                </Button>
+              )}
             </CardContent>
           </Card>
         </Box>
@@ -112,25 +138,26 @@ export default function CourseDetail() {
           <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
             Description
           </Typography>
-          <Typography variant="body1" sx={{ mb: 4 }}>
-            This comprehensive course is designed for developers who want to learn how to build robust,
-            production-ready web applications using Next.js. You will master server-side rendering, static site
-            generation, API routes, dynamic routing, and much more. By the end of this course, you will be
-            able to create SEO-friendly, scalable, and fast web applications with ease.
-          </Typography>
+          <Typography
+            variant="body1"
+            sx={{ mb: 4 }}
+            dangerouslySetInnerHTML={{ __html: data?.course?.description }}
+          />
 
-          <Paper elevation={1} sx={{ p: 2, borderRadius: 2, backgroundColor: "#fafafa" }}>
+          <Paper
+            elevation={1}
+            sx={{ p: 2, borderRadius: 2, backgroundColor: "#fafafa" }}
+          >
             <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
               Course Content
             </Typography>
             <Typography variant="body2" sx={{ mb: 2 }}>
-              4 lectures
+              {data?.course?.lectures?.length} lectures
             </Typography>
             <Divider sx={{ mb: 1 }} />
-            <Typography variant="body2">▶ Introduction to Next.js</Typography>
-            <Typography variant="body2">▶ Setting Up Your Next.js Development Environment</Typography>
-            <Typography variant="body2">▶ Routing in Next.js</Typography>
-            <Typography variant="body2">▶ Server-Side Rendering (SSR) and Static Site Generation (SSG)</Typography>
+            {
+              data?.course?.lectures?.map(({lectureTitle})=><Typography variant="body2">▶ {lectureTitle}</Typography>)
+            }
           </Paper>
         </Box>
       </Box>
