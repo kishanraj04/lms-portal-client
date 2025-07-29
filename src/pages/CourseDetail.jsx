@@ -17,6 +17,7 @@ import {
   useMakeCheckoutSessionMutation,
 } from "../store/api/courseApi";
 import { toast } from "react-toastify";
+import { Link as RouterLink } from 'react-router-dom';
 
 export default function CourseDetail() {
   const { courseId } = useParams();
@@ -113,10 +114,13 @@ export default function CourseDetail() {
                 </Button>
               ) : (
                 <Button
+                  component={RouterLink}
+                  to={`/course-progress/${data?.course?._id}`}
                   variant="contained"
                   color="success"
                   fullWidth
                   sx={{ mt: 2 }}
+                  
                 >
                   Continue
                 </Button>
