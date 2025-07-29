@@ -116,12 +116,20 @@ export const courseApi = createApi({
         url:`/course/course-purchase-status/${courseId}`,
         method:"GET"
       })
+    }),
+
+    searchCourse:builder.query({
+      query:(name)=>({
+        url:`/course/${name}`,
+        method:"GET"
+      })
     })
   }),
 });
 
 export const {
   useGetAllCoursesQuery,
+  useLazySearchCourseQuery,
   useGetMyCoursesQuery,
   useCreateCourseMutation,
   useGetCourseByIdQuery,

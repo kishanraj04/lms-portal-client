@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, darkScrollbar, Grid, Typography } from "@mui/material";
 import Carousel from "../components/Crousal";
 import Courses from "../components/Courses";
@@ -6,15 +6,18 @@ import SearchBar from "../components/SearchBar";
 import { useGetAllCoursesQuery } from "../store/api/courseApi";
 
 function Home() {
-  const { data: courses } = useGetAllCoursesQuery();
- 
+  const [courses,setCourses] = useState();
+  const { data: course } = useGetAllCoursesQuery();
+  useEffect(()=>{
+    setCourses(course)
+  },[course])
 
   return (
     <div style={{ backgroundColor: "white" }}>
       <Carousel />
       <Box minHeight="100vh">
         {/* Search */}
-        <SearchBar />
+        <SearchBar setCourses={setCourses}/>
 
         {/* Courses Grid */}
         <Grid

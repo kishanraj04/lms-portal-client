@@ -2,11 +2,18 @@ import { Box, Button, InputAdornment, TextField } from '@mui/material';
 import { useState } from 'react';
 
 import SearchIcon from "@mui/icons-material/Search";
-function SearchBar() {
-
+import { useLazySearchCourseQuery } from '../store/api/courseApi';
+function SearchBar({setCourses}) {
+  const [searchApi,searchResp]=useLazySearchCourseQuery()
   const [searchTerm, setSearchTerm] = useState("");
   const [query, setQuery] = useState("");
-     const handleSearch = () => setSearchTerm(query);
+  const handleSearch = async() =>{
+    console.log(query);
+    const resp = await searchApi(query)
+    if(resp?.data?.success){
+      setCourses(resp?.data)
+    }
+  };
   return (
     <>
       <Box

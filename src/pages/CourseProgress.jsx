@@ -18,7 +18,7 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetCourseWithPurchaseStatusQuery } from "../store/api/courseApi";
-import { useSaveLectureProgressMutation } from "../store/api/lectureprogressApi";
+import { useGetCompletedLectureQuery, useSaveLectureProgressMutation } from "../store/api/lectureprogressApi";
 import { useSelector } from "react-redux";
 
 export default function CourseProgress() {
@@ -32,6 +32,7 @@ export default function CourseProgress() {
     refetchOnMountOrArgChange: true,
   });
   const [lectureProgressApi,lecturProgressResp] = useSaveLectureProgressMutation()
+  const {data:completedLectures} =useGetCompletedLectureQuery(courseId,{refetchOnMountOrArgChange:true})
   const course = data?.course;
   const purchased = data?.purchased;
   useEffect(() => {
@@ -103,7 +104,6 @@ export default function CourseProgress() {
         <Card
           sx={{
             overflow: "hidden",
-            height: "80vh",
             display: "flex",
             flexDirection: "column",
           }}
@@ -126,8 +126,8 @@ export default function CourseProgress() {
               ref={videoRef}
               src={current?.vedio?.url}
               controls
+              autoPlay={false}
               playsInline
-              autoPlay
               sx={{
                 position: "absolute",
                 top: 0,
@@ -219,7 +219,7 @@ export default function CourseProgress() {
                       }
                     />
                   </ListItemButton>
-                  {isWatched && (
+                  {completedLectures?.completedLectureIds?.includes(v?._id) && (
                     <Box sx={{ px: 2 }}>
                       <CheckCircleIcon color="success" />
                     </Box>
