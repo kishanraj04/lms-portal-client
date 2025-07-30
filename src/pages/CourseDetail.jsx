@@ -28,7 +28,7 @@ export default function CourseDetail() {
     { refetchOnMountOrArgChange: true }
   );
 
-  console.log(data, data?.course?.lectures?.length);
+
   const courseCheckoutHandler = async () => {
     const resp = await createCheckoutSessionApi(courseId);
   };

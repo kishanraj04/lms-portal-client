@@ -123,6 +123,12 @@ export const courseApi = createApi({
         url:`/course/${name}`,
         method:"GET"
       })
+    }),
+
+    userLearningProgress:builder.query({
+      query:()=>({
+        url:`/course/learning/progress`
+      })
     })
   }),
 });
@@ -141,5 +147,6 @@ export const {
   useUpdateLectureMutation,
   useMakeCoursePublicMutation,
   useMakeCheckoutSessionMutation,
-  useGetCourseWithPurchaseStatusQuery
+  useGetCourseWithPurchaseStatusQuery,
+  useUserLearningProgressQuery
 } = courseApi;
