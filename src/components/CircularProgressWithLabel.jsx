@@ -1,109 +1,93 @@
-import React from 'react';
-import { Box, Typography, CircularProgress } from '@mui/material';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Box, Typography, CircularProgress } from "@mui/material";
+import { Link } from "react-router-dom";
 
-// Custom Circular Progress component
-export const CircularProgressWithLabel = ({ courseId, value, label, color1, color2 }) => {
+export const CircularProgressWithLabel = ({
+  courseId,
+  value,
+  label,
+  color1,
+  color2,
+}) => {
   return (
     <Box
       component={Link}
       to={`/course-progress/${courseId}`}
       sx={{
-        position: 'relative',
-        display: 'flex',
-        alignItems: 'center',
-        flexDirection:"column",
-        textDecoration: 'none',
-        color: 'white',
-        mx: 4,
+        position: "relative",
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "column",
+        textDecoration: "none",
+        color: "inherit",
+        mx: 2,
         mb: 4,
+        width: 160,
       }}
     >
-      {/* Progress Circle with two layers */}
-      <Box sx={{ position: 'relative', width: 120, height: 120 }}>
+      {/* Progress Circle with background and foreground */}
+      <Box sx={{ position: "relative", width: 160, height: 160 }}>
+        {/* Background Circle */}
         <CircularProgress
           variant="determinate"
           value={100}
-          size={120}
-          thickness={4}
+          size={160}
+          thickness={5}
           sx={{
             color: color2,
-            position: 'absolute',
+            position: "absolute",
             top: 0,
             left: 0,
           }}
         />
+
+        {/* Foreground Circle (Actual Progress) */}
         <CircularProgress
           variant="determinate"
           value={value}
-          size={120}
-          thickness={4}
+          size={160}
+          thickness={5}
           sx={{
             color: color1,
-            position: 'absolute',
+            position: "absolute",
             top: 0,
             left: 0,
           }}
         />
 
-        {/* Percentage Label Centered Inside */}
+        {/* Center Label */}
         <Box
           sx={{
-            position: 'absolute',
+            position: "absolute",
             top: 0,
             left: 0,
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color:"white"
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexDirection: "column",
+            textAlign: "center",
+            color: "#fff",
           }}
         >
-          <Typography variant="h6" fontWeight={700} color="white">
+          <Typography variant="h6" fontWeight={700}>
             {`${value}%`}
           </Typography>
+          <Typography variant="caption">Complete</Typography>
         </Box>
       </Box>
 
-      {/* Label Under the Circle */}
-      <Typography variant="subtitle1" fontWeight={600} mt={1}>
+      {/* Label below the circle */}
+      <Typography
+        variant="subtitle1"
+        fontWeight={600}
+        mt={1.5}
+        textAlign="center"
+        color="white"
+      >
         {label}
       </Typography>
     </Box>
   );
 };
-
-// export default function SkillsProgress() {
-//   return (
-//     <Box textAlign="center" mt={5}>
-//       <Typography variant="h4" fontWeight={700} gutterBottom>
-//         GeeksforGeeks Circular Progress Bar
-//       </Typography>
-
-//       <Box
-//         display="flex"
-//         justifyContent="center"
-//         alignItems="center"
-//         flexWrap="wrap"
-//         mt={4}
-//         gap={4}
-//       >
-//         <CircularProgressWithLabel
-//           courseId="java"
-//           value={85}
-//           label="Java"
-//           color1="#006400" // dark green
-//           color2="#90EE90" // light green
-//         />
-//         <CircularProgressWithLabel
-//           courseId="html"
-//           value={50}
-//           label="HTML"
-//           color1="#7CFC00" // bright green
-//           color2="#90EE90" // light green
-//         />
-//       </Box>
-//     </Box>
-//   );
-// }

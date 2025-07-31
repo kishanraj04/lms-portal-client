@@ -206,6 +206,7 @@ const Profile = () => {
           fontWeight="bold"
           textAlign="center"
           gutterBottom
+          sx={{marginBottom:3}}
         >
           Enrolled Courses
         </Typography>

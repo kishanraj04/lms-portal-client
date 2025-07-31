@@ -11,7 +11,7 @@ import {
   Paper,
   CircularProgress,
 } from "@mui/material";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   useGetCourseWithPurchaseStatusQuery,
   useMakeCheckoutSessionMutation,
@@ -27,8 +27,13 @@ export default function CourseDetail() {
     courseId,
     { refetchOnMountOrArgChange: true }
   );
-
-
+  const navigate = useNavigate()
+  useEffect(()=>{
+    if(data?.purchased){
+      console.log(courseId);
+      navigate(`/course-progress/${courseId}`)
+    }
+  },[data])
   const courseCheckoutHandler = async () => {
     const resp = await createCheckoutSessionApi(courseId);
   };

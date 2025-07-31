@@ -42,12 +42,12 @@ const route = createBrowserRouter([
         element: <Learning />,
       },
       {
-        path:"/course/detail/:courseId",
-        element:<CourseDetail/>
+        path: "/course/detail/:courseId",
+        element: <CourseDetail />,
       },
       {
-        path:"/course-progress/:courseId",
-        element:<CourseProgress/>
+        path: "/course-progress/:courseId",
+        element: <CourseProgress />,
       },
       {
         path: "/dashboard",
@@ -58,25 +58,25 @@ const route = createBrowserRouter([
             element: <Admin />,
           },
           {
-            path:"create-course",
-            element:<CreateCourse/>
+            path: "create-course",
+            element: <CreateCourse />,
           },
           {
-            path:"manage-courses",
-            element:<ManageCourse/>
+            path: "manage-courses",
+            element: <ManageCourse />,
           },
           {
-            path:"manage-courses/:id",
-            element:<EditCourse/>
+            path: "manage-courses/:id",
+            element: <EditCourse />,
           },
           {
-            path:"manage-courses/vedio/upload/:id",
-            element:<UploadLecturePage/>
+            path: "manage-courses/vedio/upload/:id",
+            element: <UploadLecturePage />,
           },
-           {
-      path: "manage-courses/vedio/upload/:id/lecture/update", // ✅ FIXED: update lecture by ID
-      element: <EditLecturePage />, // use correct component for editing
-    },
+          {
+            path: "manage-courses/vedio/upload/:id/lecture/update", 
+            element: <EditLecturePage />, 
+          },
         ],
       },
       {

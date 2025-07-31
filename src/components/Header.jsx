@@ -30,7 +30,6 @@ import { Link } from 'react-router-dom'
 const settingsWithIcons = [
   { name: "Home", icon: <Home fontSize="small" /> },
   { name: "Profile", icon: <AccountCircleIcon fontSize="small" /> },
-  { name: "Account", icon: <SettingsIcon fontSize="small" /> },
   { name: "Learning", icon: <SchoolIcon fontSize="small" /> },
   { name: "DashBoard", icon: <DashboardIcon fontSize="small" /> },
   { name: "Logout", icon: <LogoutIcon fontSize="small" /> },
@@ -51,7 +50,6 @@ function Header() {
     setAnchorElUser(null);
     if (name === "Profile") navigate("/profile");
     else if (name === "DashBoard") navigate("/dashboard");
-    else if (name === "Account") navigate("/account");
     else if (name === "Learning") navigate("/learning");
     else if (name === "Logout") logoutUserHelper(logoutUser);
     else if (name === "Home") navigate("/");

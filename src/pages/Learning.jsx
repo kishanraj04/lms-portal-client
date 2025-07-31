@@ -24,6 +24,7 @@ function Learning() {
         justifyContent="center"
         alignItems="center"
         gap={4}
+        sx={{marginTop:"5%"}}
       >
         {courseProg?.progress?.map(
           ({ courseId, progressValue, title, colour1, colour2 }) => (

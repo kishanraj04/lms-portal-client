@@ -24,11 +24,35 @@ export const lecturProgressApi = createApi({
         method:"GET"
       }),
       providesTags:["complete"]
+     }),
+
+     instructorCourseWithPrice:builder.query({
+      query:()=>({
+        url:"/instructorcourse/with-price",
+        method:"GET"
+      })
+     }),
+
+     courseWithEnrolledStudent:builder.query({
+      query:()=>({
+        url:"/course/with-enrolled-student",
+        method:"GET"
+      })
+     }),
+
+     getMonthRevenue:builder.query({
+      query:()=>({
+        url:"/month/revenue",
+        method:"GET"
+      })
      })
   }),
 });
 
 export const {
   useSaveLectureProgressMutation,
-  useGetCompletedLectureQuery
+  useGetCompletedLectureQuery,
+  useInstructorCourseWithPriceQuery,
+  useCourseWithEnrolledStudentQuery,
+  useGetMonthRevenueQuery
 } = lecturProgressApi;
