@@ -20,6 +20,8 @@ import { store } from "./store/configureStore.js";
 import EditLecturePage from "./components/EditeLecturePage.jsx";
 import CourseDetail from "./pages/CourseDetail.jsx";
 import CourseProgress from "./pages/CourseProgress.jsx";
+import EnrolledStudents from "./components/admin/EnrolledStudents.jsx";
+import EnrolledStudentdetails from "./components/admin/EnrolledStudentdetails.jsx";
 const route = createBrowserRouter([
   {
     path: "/auth",
@@ -74,8 +76,16 @@ const route = createBrowserRouter([
             element: <UploadLecturePage />,
           },
           {
-            path: "manage-courses/vedio/upload/:id/lecture/update", 
-            element: <EditLecturePage />, 
+            path: "manage-courses/vedio/upload/:id/lecture/update",
+            element: <EditLecturePage />,
+          },
+          {
+            path: "enrolled-student",
+            element: <EnrolledStudents />,
+          },
+          {
+            path: "enrolled-students-details/:courseId",
+            element: <EnrolledStudentdetails />,
           },
         ],
       },

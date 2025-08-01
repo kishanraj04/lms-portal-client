@@ -2,10 +2,11 @@ import React from 'react';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Box, Typography } from '@mui/material';
 
-export default function MyPieChart({data}) {
+export default function MyPieChart({data,title}) {
     const COLORS = ['#a135cbff', '#00C49F', '#FFBB28', '#FF8042'];
   return (
     <Box sx={{ width: '100%', height: 400, p: 4 }}>
+      {/* <Typography>{title}</Typography> */}
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
