@@ -33,6 +33,7 @@ export default function CourseProgress() {
   });
   const [lectureProgressApi,lecturProgressResp] = useSaveLectureProgressMutation()
   const {data:completedLectures} =useGetCompletedLectureQuery(courseId,{refetchOnMountOrArgChange:true})
+  const [isResource,setIsResource] = useState(false);
   const course = data?.course;
   const purchased = data?.purchased;
   useEffect(() => {
@@ -137,10 +138,13 @@ export default function CourseProgress() {
               }}
             />
           </Box>
-          <CardContent>
+          <CardContent sx={{display:"flex" , justifyContent:"space-between"}}>
             <Typography variant="body2" color="text.secondary">
               {course?.description?.replace(/<[^>]+>/g, "").slice(0, 150)}...
             </Typography>
+
+            <Typography variant="body2" color="text.secondary" sx={{backgroundColor:"green" , borderRadius:"10%" , padding:"3px" , color:"white" , cursor:"pointer" , width:"25%" , }}
+            onClick={()=>setIsResource(!isResource)}>{!isResource?"Resources":"Lecture"}</Typography>
           </CardContent>
         </Card>
       </Grid>
@@ -152,7 +156,8 @@ export default function CourseProgress() {
         md={7}
         sx={{ flexBasis: { md: "60%" }, maxWidth: { md: "60%" } }}
       >
-        <Paper
+        {
+          !isResource?<Paper
           variant="outlined"
           sx={{ maxHeight: "80vh", overflowY: "auto", flex: 1 }}
         >
@@ -228,7 +233,8 @@ export default function CourseProgress() {
               );
             })}
           </List>
-        </Paper>
+        </Paper>:"resource section"
+        }
       </Grid>
     </Container>
   );

@@ -22,6 +22,7 @@ import CourseDetail from "./pages/CourseDetail.jsx";
 import CourseProgress from "./pages/CourseProgress.jsx";
 import EnrolledStudents from "./components/admin/EnrolledStudents.jsx";
 import EnrolledStudentdetails from "./components/admin/EnrolledStudentdetails.jsx";
+import UploadResources from "./components/UploadResources.jsx";
 const route = createBrowserRouter([
   {
     path: "/auth",
@@ -29,30 +30,30 @@ const route = createBrowserRouter([
   },
   {
     path: "/",
-    element: <ProtectedRoute></ProtectedRoute>,
+    element: <ProtectedRoute />,
     children: [
       {
-        path: "/",
+        path: "",
         element: <Home />,
       },
       {
-        path: "/profile",
+        path: "profile",
         element: <Profile />,
       },
       {
-        path: "/learning",
+        path: "learning",
         element: <Learning />,
       },
       {
-        path: "/course/detail/:courseId",
+        path: "course/detail/:courseId",
         element: <CourseDetail />,
       },
       {
-        path: "/course-progress/:courseId",
+        path: "course-progress/:courseId",
         element: <CourseProgress />,
       },
       {
-        path: "/dashboard",
+        path: "dashboard",
         element: <DahsBoard />,
         children: [
           {
@@ -80,6 +81,10 @@ const route = createBrowserRouter([
             element: <EditLecturePage />,
           },
           {
+            path: "manage-courses/vedio/upload/:id/lecture/upload-resources",
+            element: <UploadResources />,
+          },
+          {
             path: "enrolled-student",
             element: <EnrolledStudents />,
           },
@@ -90,7 +95,7 @@ const route = createBrowserRouter([
         ],
       },
       {
-        path: "/account",
+        path: "account",
         element: <Account />,
       },
     ],

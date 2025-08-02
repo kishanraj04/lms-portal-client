@@ -1,5 +1,5 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import React from "react";
+import { useLocation, useParams } from "react-router-dom";
 import {
   Avatar,
   Paper,
@@ -12,11 +12,13 @@ import {
   Typography,
   CircularProgress,
   Box,
-} from '@mui/material';
-import { useGetEnrolledStudentInSpecificCourseQuery } from '../../store/api/instructoApi';
+} from "@mui/material";
+import { useGetEnrolledStudentInSpecificCourseQuery } from "../../store/api/instructoApi";
+import { Link } from "react-router-dom";
 
 function EnrolledStudentdetails() {
   const { courseId } = useParams();
+  const location = useLocation();
   const {
     data: enrolledStudent,
     isLoading,
@@ -39,39 +41,73 @@ function EnrolledStudentdetails() {
   if (isError) {
     return (
       <Typography color="error" mt={4} textAlign="center">
-        Error: {error?.data?.message || 'Something went wrong'}
+        Error: {error?.data?.message || "Something went wrong"}
       </Typography>
     );
   }
 
   return (
-    <Box p={3}>
-      <Typography variant="h5" gutterBottom>
-        Enrolled Students
-      </Typography>
-
+    <Box p={3} sx={{ minHeight: "100vh" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 1,
+          marginBottom:2
+        }}
+      >
+        <Typography>Total Student Enrolled In </Typography>{" "}
+        <Typography variant="h6" sx={{ color: "red", fontWeight: "bold" }}>
+          {location?.state}
+        </Typography>
+      </Box>
       {enrolledDetails.length === 0 ? (
         <Typography>No students enrolled in this course yet.</Typography>
       ) : (
-        <TableContainer component={Paper}>
+        <TableContainer
+          component={Paper}
+          sx={{
+            overflowX: "auto",
+            maxWidth: "100%",
+            whiteSpace: "nowrap",
+            scrollbarWidth: "none",
+          }}
+        >
           <Table>
-            <TableHead>
+            <TableHead sx={{ backgroundColor: "#211f1fff" }}>
               <TableRow>
-                <TableCell><strong>Avatar</strong></TableCell>
-                <TableCell><strong>User Name</strong></TableCell>
-                <TableCell><strong>Email</strong></TableCell>
-                <TableCell><strong>User ID</strong></TableCell>
+                <TableCell sx={{ color: "white" }}>
+                  <strong>Avatar</strong>
+                </TableCell>
+                <TableCell sx={{ color: "white" }}>
+                  <strong>User Name</strong>
+                </TableCell>
+                <TableCell sx={{ color: "white" }}>
+                  <strong>Email</strong>
+                </TableCell>
+                <TableCell sx={{ color: "white" }}>
+                  <strong>User ID</strong>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {enrolledDetails.map((student) => (
-                <TableRow key={student.userId}>
+              {enrolledDetails.map((student, index) => (
+                <TableRow
+                  key={student?.userId}
+                  sx={{
+                    backgroundColor: index % 2 === 0 ? "#484646ff" : "#ffffff",
+                    "&:hover": {
+                      backgroundColor: "#5a6567ff",
+                    },
+                  }}
+                >
                   <TableCell>
-                    <Avatar src={student.avatar} alt={student.userName} />
+                    <Avatar src={student?.avatar} alt={student?.userName} component={Link} to={student?.avatar} target="_blank"/>
                   </TableCell>
-                  <TableCell>{student.userName}</TableCell>
-                  <TableCell>{student.email}</TableCell>
-                  <TableCell>{student.userId}</TableCell>
+                  <TableCell>{student?.userName}</TableCell>
+                  <TableCell>{student?.email}</TableCell>
+                  <TableCell>{student?.userId}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

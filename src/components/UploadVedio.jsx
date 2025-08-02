@@ -17,6 +17,8 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useNavigate, useParams } from "react-router-dom";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import EditIcon from "@mui/icons-material/Edit";
+import UploadIcon from '@mui/icons-material/Upload';
+
 import {
   useDeleteLectureMutation,
   useGetLectureVedioInstructorQuery,
@@ -41,7 +43,7 @@ const UploadLecturePage = () => {
     lectureVedio: "",
     isFree: false,
   });
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   useEffect(() => {
     if (uploadLectureApiResp?.isSuccess) {
       toast.success("lecture uploaded");
@@ -244,7 +246,7 @@ const UploadLecturePage = () => {
         <Stack spacing={1}>
           {instructorLecture?.lectures?.length == 0
             ? "No lectures uploaded yet. Start by uploading one above!"
-            : instructorLecture?.lectures?.map((lecture,idx) => (
+            : instructorLecture?.lectures?.map((lecture, idx) => (
                 <Card
                   key={lecture?._id}
                   sx={{
@@ -257,9 +259,7 @@ const UploadLecturePage = () => {
                   <Stack direction="row" alignItems="center" spacing={4}>
                     {/* Circular video preview */}
 
-                    <Typography>
-                      Lecture{idx+1}
-                    </Typography>
+                    <Typography>Lecture{idx + 1}</Typography>
                     <a
                       href={lecture?.vedio?.url}
                       target="_blank"
@@ -296,6 +296,19 @@ const UploadLecturePage = () => {
 
                     <Box>
                       <Stack direction="row">
+
+                           <Button
+                          variant="text"
+                          color="primary"
+                          onClick={() =>
+                            navigate(`lecture/upload-resources`, {
+                              state: { lectureId: lecture?._id,courseId:id},
+                            })
+                          }
+                        >
+                          <UploadIcon />
+                        </Button>
+
                         <Button
                           variant="text"
                           color="error"
@@ -316,7 +329,11 @@ const UploadLecturePage = () => {
                         <Button
                           variant="text"
                           color="primary"
-                          onClick={() =>navigate(`lecture/update`,{state:{lectureId:lecture?._id}})}
+                          onClick={() =>
+                            navigate(`lecture/update`, {
+                              state: { lectureId: lecture?._id },
+                            })
+                          }
                         >
                           <EditIcon />
                         </Button>
