@@ -143,7 +143,7 @@ export default function CourseProgress() {
               {course?.description?.replace(/<[^>]+>/g, "").slice(0, 150)}...
             </Typography>
 
-            <Typography variant="body2" color="text.secondary" sx={{backgroundColor:"green" , borderRadius:"10%" , padding:"3px" , color:"white" , cursor:"pointer" , width:"25%" , }}
+            <Typography variant="body2" color="text.secondary" sx={{backgroundColor:"green" , borderRadius:"10%"  , color:"white" , cursor:"pointer" , width:"20%" ,textAlign:"center" }}
             onClick={()=>setIsResource(!isResource)}>{!isResource?"Resources":"Lecture"}</Typography>
           </CardContent>
         </Card>

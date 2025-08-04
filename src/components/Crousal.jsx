@@ -26,36 +26,64 @@ const Carousel = () => {
   };
 
   return (
-    <Box sx={{ width: "100%", overflow: "hidden", display:"flex" , justifyContent:"center", alignItems:"center" , mt:"15px"}}>
-     <Box sx={{ width: "95%", overflow: "hidden" }}>
-         <Slider {...settings}>
-        {images.map((item, index) => (
-          <Box key={index} sx={{ position: "relative", outline: "none" , boxShadow: 3}}>
-            <CardMedia
-              component="img"
-              image={item?.url}
-              sx={{
-                width: "100%",
-                height: { xs: "200px", sm: "300px", md: "400px" },
-                objectFit: "fill",
-              }}
-            />
-            <Typography
-              variant="h6"
-              sx={{
-                position: "absolute",
-                bottom: 16,
-                left: 16,
-                color: "#fff",
-                textShadow: "0 0 5px rgba(0,0,0,0.5)",
-              }}
+    <Box
+      sx={{
+        width: "100%",
+        overflow: "hidden",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        mt: "15px",
+      }}
+    >
+      <Box sx={{ width: "95%", overflow: "hidden", position: "relative" }}>
+        <Slider {...settings}>
+          {images.map((item, index) => (
+            <Box
+              key={index}
+              sx={{ position: "relative", outline: "none", boxShadow: 3 }}
             >
-              {/* Optional Caption */}
-            </Typography>
-          </Box>
-        ))}
-      </Slider>
-     </Box>
+              <CardMedia
+                component="img"
+                image={item?.url}
+                sx={{
+                  width: "100%",
+                  height: { xs: "200px", sm: "300px", md: "400px" },
+                  objectFit: "fill",
+                }}
+              />
+              <Typography
+                variant="h6"
+                sx={{
+                  position: "absolute",
+                  bottom: 16,
+                  left: 16,
+                  color: "#fff",
+                  textShadow: "0 0 5px rgba(0,0,0,0.5)",
+                }}
+              >
+                {/* Optional Caption */}
+              </Typography>
+            </Box>
+          ))}
+        </Slider>
+{/* 
+        <Typography
+          sx={{
+            position: "absolute",
+            top:"90%",
+            left:"50%",
+            zIndex: 1200,
+            color: "#fff",
+            fontWeight: "bold",
+            backgroundColor: "rgba(0,0,0,0.4)",
+            padding: "4px 12px",
+            borderRadius: "4px",
+          }}
+        >
+          Explore
+        </Typography> */}
+      </Box>
     </Box>
   );
 };

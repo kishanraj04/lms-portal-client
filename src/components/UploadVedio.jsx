@@ -301,12 +301,14 @@ const UploadLecturePage = () => {
                           variant="text"
                           color="primary"
                           onClick={() =>
-                            navigate(`lecture/upload-resources`, {
+                          {return toast.error("undere progress")
+                             navigate(`lecture/upload-resources`, {
                               state: { lectureId: lecture?._id,courseId:id},
                             })
                           }
+                          }
                         >
-                          <UploadIcon />
+                          <UploadIcon/>
                         </Button>
 
                         <Button

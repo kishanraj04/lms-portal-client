@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { toast } from "react-toastify";
 export const courseApi = createApi({
   reducerPath: "courseApi",
-  tagTypes:["course","lecture"],
+  tagTypes: ["course", "lecture"],
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:3000/api/v1/course/",
     credentials: "include",
@@ -13,13 +13,13 @@ export const courseApi = createApi({
       query: () => ({
         url: "/allCourse",
       }),
-      providesTags:["course"]
+      providesTags: ["course"],
     }),
     getMyCourses: builder.query({
       query: () => ({
         url: "/me",
       }),
-      providesTags:["course"]
+      providesTags: ["course"],
     }),
     createCourse: builder.mutation({
       query: (course) => ({
@@ -27,7 +27,7 @@ export const courseApi = createApi({
         body: course,
         method: "POST",
       }),
-      invalidatesTags:["course"],
+      invalidatesTags: ["course"],
       onQueryStarted: async (arg, { queryFulfilled }) => {
         try {
           const { data } = await queryFulfilled; // ✅ no parentheses
@@ -44,92 +44,99 @@ export const courseApi = createApi({
       }),
     }),
 
-    editCourde:builder.mutation({
-        query:({id,data})=>({
-            url:`/${id}`,
-            body:data,
-            method:"PUT"
-        }),
-        invalidatesTags:["course"]
-    }),
-
-    uploadLecture:builder.mutation({
-      query:({id,formData})=>({
-        url:`/upload/lecture/${id}`,
-        body:formData,
-        method:"POST"
+    editCourde: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/${id}`,
+        body: data,
+        method: "PUT",
       }),
-      invalidatesTags:["lecture"]
+      invalidatesTags: ["course"],
     }),
 
-    getLectureVedioInstructor:builder.query({
-      query:(courseId)=>({
-        url:`/getlecture/instructor/${courseId}`,
-        method:"GET"
+    uploadLecture: builder.mutation({
+      query: ({ id, formData }) => ({
+        url: `/upload/lecture/${id}`,
+        body: formData,
+        method: "POST",
       }),
-      providesTags:["lecture"]
+      invalidatesTags: ["lecture"],
     }),
 
-    deleteLecture:builder.mutation({
-      query:({lectureId,public_id})=>({
-        url:`/delete/lecture/${lectureId}`,
-        method:"DELETE",
-        body:{public_id}
+    getLectureVedioInstructor: builder.query({
+      query: (courseId) => ({
+        url: `/getlecture/instructor/${courseId}`,
+        method: "GET",
       }),
-      invalidatesTags:["lecture"]
+      providesTags: ["lecture"],
     }),
 
-    getSingleLecture:builder.query({
-      query:(lectureId)=>({
-        url:`/lecture/${lectureId}`,
-        method:"GET"
-      })
-    }),
-
-    updateLecture:builder.mutation({
-      query:({lectureId,formData})=>({
-        url:`/updata/lecture/${lectureId}`,
-        method:"PUT",
-        body:formData
-      })
-    }),
-
-    makeCoursePublic:builder.mutation({
-      query:({courseId,isPublish})=>({
-        url:`/publishthecourse/${courseId}`,
-        body:{isPublish:isPublish},
-        method:"PUT"
+    deleteLecture: builder.mutation({
+      query: ({ lectureId, public_id }) => ({
+        url: `/delete/lecture/${lectureId}`,
+        method: "DELETE",
+        body: { public_id },
       }),
-      invalidatesTags:["course"]
+      invalidatesTags: ["lecture"],
     }),
 
-    makeCheckoutSession:builder.mutation({
-      query:(courseId)=>({
-        url:"/checkout/create-checkout-session",
-        body:{courseId},
-        method:"POST"
-      })
+    getSingleLecture: builder.query({
+      query: (lectureId) => ({
+        url: `/lecture/${lectureId}`,
+        method: "GET",
+      }),
     }),
 
-    getCourseWithPurchaseStatus:builder.query({
-      query:(courseId)=>({
-        url:`/course/course-purchase-status/${courseId}`,
-        method:"GET"
-      })
+    updateLecture: builder.mutation({
+      query: ({ lectureId, formData }) => ({
+        url: `/updata/lecture/${lectureId}`,
+        method: "PUT",
+        body: formData,
+      }),
     }),
 
-    searchCourse:builder.query({
-      query:(name)=>({
-        url:`/course/${name}`,
-        method:"GET"
-      })
+    makeCoursePublic: builder.mutation({
+      query: ({ courseId, isPublish }) => ({
+        url: `/publishthecourse/${courseId}`,
+        body: { isPublish: isPublish },
+        method: "PUT",
+      }),
+      invalidatesTags: ["course"],
     }),
 
-    userLearningProgress:builder.query({
-      query:()=>({
-        url:`/course/learning/progress`
-      })
-    })
+    makeCheckoutSession: builder.mutation({
+      query: (courseId) => ({
+        url: "/checkout/create-checkout-session",
+        body: { courseId },
+        method: "POST",
+      }),
+    }),
+
+    getCourseWithPurchaseStatus: builder.query({
+      query: (courseId) => ({
+        url: `/course/course-purchase-status/${courseId}`,
+        method: "GET",
+      }),
+    }),
+
+    searchCourse: builder.query({
+      query: (name) => ({
+        url: `/course/${name}`,
+        method: "GET",
+      }),
+    }),
+
+    userLearningProgress: builder.query({
+      query: () => ({
+        url: `/course/learning/progress`,
+      }),
+    }),
+
+    exploreCourses: builder.query({
+      query: () => ({
+        url: "/explore/courses",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -148,5 +155,6 @@ export const {
   useMakeCoursePublicMutation,
   useMakeCheckoutSessionMutation,
   useGetCourseWithPurchaseStatusQuery,
-  useUserLearningProgressQuery
+  useUserLearningProgressQuery,
+  useExploreCoursesQuery,
 } = courseApi;

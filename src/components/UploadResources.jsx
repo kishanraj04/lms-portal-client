@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Box,
   Typography,
@@ -10,32 +10,67 @@ import {
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useGetAllResourcesQuery, useUploadResoursesMutation } from "../store/api/instructoApi";
+import PdfResourceList from "./PdfResoList";
 
 const UploadResources = () => {
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [resources, setResources] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
-  const {state}  = useLocation()
+  const inputRef = useRef();
+  const { state } = useLocation();
+  const [uploadResourceApi,uploadResp] = useUploadResoursesMutation();
+  const {data} = useGetAllResourcesQuery(state?.courseId,{skip:!state?.courseId,refetchOnMountOrArgChange:true})
+  console.log(data);
   const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
+    setResources(e.target.files[0]);
     setUploadSuccess(false);
   };
+  console.log(data?.resources);
+  const handleUpload = async () => {
+    if (!resources) {
+      toast.error("Please select a file.");
+      return;
+    }
 
-  const handleUpload = () => {
-    if (!selectedFile) return;
+    if (!state?.lectureId || !state?.courseId) {
+      toast.error("Missing lecture or course information.");
+      return;
+    }
 
     setUploading(true);
-    setTimeout(() => {
+    setUploadSuccess(false);
+
+    try {
+      const formData = new FormData();
+      formData.append("resources", resources);
+      formData.append("lectureId", state.lectureId);
+      formData.append("courseId", state.courseId);
+      const res = await uploadResourceApi(formData).unwrap();
+      console.log(res);
+      if (res?.success || res?.data?.message) {
+        setUploadSuccess(true);
+        toast.success("Resource uploaded successfully!");
+        setResources(null);
+        if (inputRef.current) inputRef.current.value = "";
+      } else {
+        toast.error("Upload failed. Please try again.");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error(err?.message || "only pdf allowed");
+    } finally {
       setUploading(false);
-      setUploadSuccess(true);
-    }, 1500);
+    }
   };
 
   return (
+    <>
     <Box
       sx={{
-        minHeight: "10vh",
-        // background: "linear-gradient(135deg, #0f2027, #203a43, #2c5364)",
+        minHeight: "100vh",
+        backgroundColor: "#121212",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -43,7 +78,7 @@ const UploadResources = () => {
       }}
     >
       <Paper
-        elevation={10}
+        elevation={12}
         sx={{
           p: 5,
           borderRadius: 4,
@@ -58,8 +93,8 @@ const UploadResources = () => {
           <Box textAlign="center">
             <CloudUploadIcon
               sx={{
-                fontSize: 50,
-                color: "#46adbaff",
+                fontSize: 60,
+                color: "#00bcd4",
                 transition: "transform 0.3s ease",
                 "&:hover": {
                   transform: "scale(1.2)",
@@ -70,21 +105,21 @@ const UploadResources = () => {
               Upload Course Resource
             </Typography>
             <Typography variant="body2" color="grey.500">
-              Supported formats: PDF, PPT, ZIP, DOCX
+              Allowed: PDF, DOCX, PPT, TXT, ZIP (no videos/images)
             </Typography>
           </Box>
 
           <Input
+            inputRef={inputRef}
             type="file"
+            name="resources"
             fullWidth
             onChange={handleFileChange}
             inputProps={{
-              accept: `.pdf,.doc,.docx,.ppt,.pptx,.txt,.zip,.rar`,
+              accept: ".pdf,.doc,.docx,.ppt,.pptx,.txt,.zip,.rar",
             }}
             sx={{
-              input: {
-                color: "#fff",
-              },
+              input: { color: "#fff" },
               border: "1px solid #444",
               borderRadius: 1,
               px: 1,
@@ -93,9 +128,9 @@ const UploadResources = () => {
             }}
           />
 
-          {selectedFile && (
+          {resources && (
             <Typography variant="body2" color="grey.400">
-              Selected File: {selectedFile.name}
+              Selected File: {resources.name}
             </Typography>
           )}
 
@@ -105,9 +140,9 @@ const UploadResources = () => {
             variant="contained"
             color="info"
             size="large"
-            startIcon={<CloudUploadIcon color="blue" />}
+            startIcon={<CloudUploadIcon />}
             onClick={handleUpload}
-            disabled={uploading || !selectedFile}
+            disabled={uploading || !resources}
             sx={{
               fontWeight: "bold",
               borderRadius: 2,
@@ -127,6 +162,12 @@ const UploadResources = () => {
         </Stack>
       </Paper>
     </Box>
+
+    {/* res. list */}
+    <Box>
+      <PdfResourceList resources={data?.resources}/>
+    </Box>
+    </>
   );
 };
 

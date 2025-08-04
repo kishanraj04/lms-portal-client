@@ -63,7 +63,9 @@ function EnrolledStudentdetails() {
         </Typography>
       </Box>
       {enrolledDetails.length === 0 ? (
-        <Typography>No students enrolled in this course yet.</Typography>
+        <Box sx={{display:"flex" , justifyContent:"center" , alignItems:"center" , marginTop:3}}>
+          <Typography>No students enrolled in this course yet.</Typography>
+        </Box>
       ) : (
         <TableContainer
           component={Paper}

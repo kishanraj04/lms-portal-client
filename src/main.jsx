@@ -23,6 +23,8 @@ import CourseProgress from "./pages/CourseProgress.jsx";
 import EnrolledStudents from "./components/admin/EnrolledStudents.jsx";
 import EnrolledStudentdetails from "./components/admin/EnrolledStudentdetails.jsx";
 import UploadResources from "./components/UploadResources.jsx";
+import Explore from "./pages/Explore.jsx";
+import FeedBack from "./pages/FeedBack.jsx";
 const route = createBrowserRouter([
   {
     path: "/auth",
@@ -47,6 +49,14 @@ const route = createBrowserRouter([
       {
         path: "course/detail/:courseId",
         element: <CourseDetail />,
+      },
+      {
+        path:"/feedback",
+        element:<FeedBack/>
+      },
+      {
+        path:"explore",
+        element:<Explore/>
       },
       {
         path: "course-progress/:courseId",

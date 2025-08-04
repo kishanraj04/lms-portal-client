@@ -30,7 +30,7 @@ const ManageCourseTable = () => {
 
   useEffect(()=>{
     if(makeCoursePublicResp?.isError){
-      toast.error(makeCoursePublicResp?.error)
+      toast.error(makeCoursePublicResp?.error?.data?.message)
     }
   },[makeCoursePublicResp])
 

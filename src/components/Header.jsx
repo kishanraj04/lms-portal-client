@@ -26,13 +26,28 @@ import {
   useLazyLogoutUserQuery,
 } from "../store/api/userApi";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from 'react-router-dom'
+import { Link } from "react-router-dom";
+import FeedbackIcon from "@mui/icons-material/Feedback";
+
 const settingsWithIcons = [
-  { name: "Home", icon: <Home fontSize="small" /> },
-  { name: "Profile", icon: <AccountCircleIcon fontSize="small" /> },
-  { name: "Learning", icon: <SchoolIcon fontSize="small" /> },
-  { name: "DashBoard", icon: <DashboardIcon fontSize="small" /> },
-  { name: "Logout", icon: <LogoutIcon fontSize="small" /> },
+  { name: "Home", icon: <Home fontSize="small" />, color: "red" },
+  {
+    name: "Profile",
+    icon: <AccountCircleIcon fontSize="small" />,
+    color: "blue",
+  },
+  { name: "Learning", icon: <SchoolIcon fontSize="small" />, color: "gray" },
+  {
+    name: "DashBoard",
+    icon: <DashboardIcon fontSize="small" />,
+    color: "green",
+  },
+  {
+    name: "Feedback",
+    icon: <FeedbackIcon fontSize="small" />,
+    color: "orange",
+  },
+  { name: "Logout", icon: <LogoutIcon fontSize="small" />, color: "cyan" },
 ];
 
 function Header() {
@@ -40,8 +55,10 @@ function Header() {
   const navigate = useNavigate();
   const [logoutUser] = useLazyLogoutUserQuery();
   const dispatch = useDispatch();
-  const { data: user } = useGetProfileQuery(undefined,{refetchOnMountOrArgChange:true});
-  
+  const { data: user } = useGetProfileQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
+
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -52,6 +69,7 @@ function Header() {
     else if (name === "DashBoard") navigate("/dashboard");
     else if (name === "Learning") navigate("/learning");
     else if (name === "Logout") logoutUserHelper(logoutUser);
+    else if (name === "Feedback") navigate("/feedback")
     else if (name === "Home") navigate("/");
   };
 
@@ -60,7 +78,7 @@ function Header() {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
-          
+
           <Typography
             variant="h6"
             noWrap
@@ -83,34 +101,59 @@ function Header() {
           <Box sx={{ flexGrow: 1 }} />
 
           {/* Avatar & menu */}
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="User Avatar" src={user?.user?.avatar} />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              anchorEl={anchorElUser}
-              open={Boolean(anchorElUser)}
-              onClose={() => setAnchorElUser(null)}
-              anchorOrigin={{ vertical: "top", horizontal: "right" }}
-              transformOrigin={{ vertical: "top", horizontal: "right" }}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              columnGap: 4,
+            }}
+          >
+            <Typography
+              component={Link}
+              to={"/explore"}
+              sx={{
+                textDecoration: "none",
+                color: "white",
+                fontFamily: "sans-serif",
+              }}
             >
-              {settingsWithIcons.map(({ name, icon }) => {
-                if (name === "DashBoard" && user?.user?.role !== "Instructor")
-                  return null;
-                return (
-                  <MenuItem
-                    key={name}
-                    onClick={() => handleCloseUserMenu(name)}
-                  >
-                    <ListItemIcon>{icon}</ListItemIcon>
-                    <Typography>{name}</Typography>
-                  </MenuItem>
-                );
-              })}
-            </Menu>
+              Explore Courses
+            </Typography>
+            <Box sx={{ flexGrow: 0 }}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar alt="User Avatar" src={user?.user?.avatar} />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: "45px" }}
+                anchorEl={anchorElUser}
+                open={Boolean(anchorElUser)}
+                onClose={() => setAnchorElUser(null)}
+                anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                transformOrigin={{ vertical: "top", horizontal: "right" }}
+              >
+                {settingsWithIcons.map(({ name, icon, color }) => {
+                  if (name === "DashBoard" && user?.user?.role !== "Instructor")
+                    return null;
+                  return (
+                    <MenuItem
+                      key={name}
+                      onClick={() => handleCloseUserMenu(name)}
+                    >
+                      <ListItemIcon
+                        sx={{ color: `${color}` }}
+                        color={`${color}`}
+                      >
+                        {icon}
+                      </ListItemIcon>
+                      <Typography>{name}</Typography>
+                    </MenuItem>
+                  );
+                })}
+              </Menu>
+            </Box>
           </Box>
         </Toolbar>
       </Container>
