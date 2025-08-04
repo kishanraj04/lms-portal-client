@@ -137,6 +137,13 @@ export const courseApi = createApi({
         method: "GET",
       }),
     }),
+
+    myEnrolledCourse:builder.query({
+      query:()=>({
+        url:"/me/enrolled-course",
+        method:"GET"
+      })
+    })
   }),
 });
 
@@ -157,4 +164,5 @@ export const {
   useGetCourseWithPurchaseStatusQuery,
   useUserLearningProgressQuery,
   useExploreCoursesQuery,
+  useMyEnrolledCourseQuery
 } = courseApi;
