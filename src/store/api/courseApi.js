@@ -143,6 +143,14 @@ export const courseApi = createApi({
         url:"/me/enrolled-course",
         method:"GET"
       })
+    }),
+
+    giveFeedBack:builder.mutation({
+      query:(data)=>({
+        url:"/cours/feedback",
+        method:"POST",
+        body:data
+      })
     })
   }),
 });
@@ -164,5 +172,6 @@ export const {
   useGetCourseWithPurchaseStatusQuery,
   useUserLearningProgressQuery,
   useExploreCoursesQuery,
-  useMyEnrolledCourseQuery
+  useMyEnrolledCourseQuery,
+  useGiveFeedBackMutation
 } = courseApi;

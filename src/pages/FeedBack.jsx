@@ -19,13 +19,14 @@ import {
 } from "@mui/material";
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import { Loader } from "../common/Loader";
-import { useMyEnrolledCourseQuery } from "../store/api/courseApi";
+import { useGiveFeedBackMutation, useMyEnrolledCourseQuery } from "../store/api/courseApi";
+import { toast } from "react-toastify";
 
 function FeedBack() {
   const { data: myCourses, isLoading } = useMyEnrolledCourseQuery(undefined, {
     refetchOnMountOrArgChange: true,
   });
-  console.log(myCourses);
+  const [feedBackApi,feedResp] = useGiveFeedBackMutation()
   const [open, setOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [formData, setFormData] = useState({ review: "", rating: "" });
@@ -43,12 +44,18 @@ function FeedBack() {
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
-
-  const handleSubmit = () => {
-    console.log("Submitted Review:", {
-      courseId: selectedCourse._id,
+  
+  const handleSubmit = async() => {
+    if(!formData?.review || !formData?.rating || !formData?.courseId){
+      if(!formData?.review) return toast.error("review field required")
+      else if(!formData?.rating) return toast.error("raring field required")
+      else if(!selectedCourse) return toast.error("please select a course")
+    }
+    const feedBackData =  {
+      courseId: selectedCourse,
       ...formData,
-    });
+    }
+    await feedBackApi(feedBackData)
     handleClose();
   };
 
