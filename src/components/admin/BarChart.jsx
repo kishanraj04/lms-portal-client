@@ -13,6 +13,7 @@ import {
 
 
 const BarCharts = ({data}) => {
+  console.log("data ",data);
   return (
     <div style={{ width: "100%", height: 450 }}>
       {/* <h2 style={{ textAlign: "center" }}>Course Enrollments</h2> */}

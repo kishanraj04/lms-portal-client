@@ -4,6 +4,7 @@ import { Box, Typography } from '@mui/material';
 
 export default function MyPieChart({data,title}) {
     const COLORS = ['#a135cbff', '#00C49F', '#FFBB28', '#FF8042'];
+    // console.log("data",data);
   return (
     <Box sx={{ width: '100%', height: 400, p: 4 }}>
       {/* <Typography>{title}</Typography> */}
@@ -19,7 +20,7 @@ export default function MyPieChart({data,title}) {
             fill="#8884d8"
             label
           >
-            {data?.map((entry, index) => (
+            {data && data?.map((entry, index) => (
               <Cell key={index} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>

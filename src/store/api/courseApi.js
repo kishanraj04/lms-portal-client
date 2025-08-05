@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { toast } from "react-toastify";
 export const courseApi = createApi({
   reducerPath: "courseApi",
-  tagTypes: ["course", "lecture"],
+  tagTypes: ["course", "lecture","review"],
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:3000/api/v1/course/",
     credentials: "include",
@@ -138,26 +138,51 @@ export const courseApi = createApi({
       }),
     }),
 
-    myEnrolledCourse:builder.query({
-      query:()=>({
-        url:"/me/enrolled-course",
-        method:"GET"
-      })
+    myEnrolledCourse: builder.query({
+      query: () => ({
+        url: "/me/enrolled-course",
+        method: "GET",
+      }),
     }),
 
-    giveFeedBack:builder.mutation({
-      query:(data)=>({
-        url:"/cours/feedback",
-        method:"POST",
-        body:data
-      })
+    giveFeedBack: builder.mutation({
+      query: (data) => ({
+        url: "/cours/feedback",
+        method: "POST",
+        body: data,
+      }),
     }),
 
-    getReview:builder.query({
-      query:(courseId)=>({
-        url:`/course/review/${courseId}`,
-        method:"GET"
-      })
+    getReview: builder.query({
+      query: (courseId) => ({
+        url: `/course/review/${courseId}`,
+        method: "GET",
+      }),
+    }),
+
+    getCourseReviewById: builder.query({
+      query: (courseId) => ({
+        url: `/course/all-review/${courseId}`,
+        method: "GET",
+      }),
+      providesTags:["review"]
+    }),
+
+    updateReview: builder.mutation({
+      query: ({ selectedReviewId, data }) => ({
+        url: `/course/update/review/${selectedReviewId}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags:["review"]
+    }),
+
+    deleteReview:builder.mutation({
+      query:(reviewId)=>({
+        url:`/course/delete-review/${reviewId}`,
+        method:"DELETE"
+      }),
+      invalidatesTags:["review"]
     })
   }),
 });
@@ -181,5 +206,8 @@ export const {
   useExploreCoursesQuery,
   useMyEnrolledCourseQuery,
   useGiveFeedBackMutation,
-  useGetReviewQuery
+  useGetReviewQuery,
+  useGetCourseReviewByIdQuery,
+  useUpdateReviewMutation,
+  useDeleteReviewMutation
 } = courseApi;

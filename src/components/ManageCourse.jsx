@@ -35,7 +35,11 @@ const ManageCourseTable = () => {
   },[makeCoursePublicResp])
 
   return (
-    <Box
+    <>
+    {
+      courses?.length==0?<Box sx={{width:"100%" , height:"70vh" , display:"flex" , justifyContent:"center" , alignItems:"center"}}><Typography
+      variant="h6"
+      >No Course Created</Typography></Box>:<Box
       sx={{
         px: 2,
         py: 4,
@@ -195,6 +199,8 @@ const ManageCourseTable = () => {
         </Table>
       </TableContainer>
     </Box>
+    }
+    </>
   );
 };
 

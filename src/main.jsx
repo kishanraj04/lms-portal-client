@@ -25,6 +25,8 @@ import EnrolledStudentdetails from "./components/admin/EnrolledStudentdetails.js
 import UploadResources from "./components/UploadResources.jsx";
 import Explore from "./pages/Explore.jsx";
 import FeedBack from "./pages/FeedBack.jsx";
+import ReviewManage from "./components/admin/ReviewManage.jsx";
+import AllReviewAndMange from "./components/admin/AllReviewAndMange.jsx";
 const route = createBrowserRouter([
   {
     path: "/auth",
@@ -51,12 +53,12 @@ const route = createBrowserRouter([
         element: <CourseDetail />,
       },
       {
-        path:"/feedback",
-        element:<FeedBack/>
+        path: "/feedback",
+        element: <FeedBack />,
       },
       {
-        path:"explore",
-        element:<Explore/>
+        path: "explore",
+        element: <Explore />,
       },
       {
         path: "course-progress/:courseId",
@@ -73,6 +75,14 @@ const route = createBrowserRouter([
           {
             path: "create-course",
             element: <CreateCourse />,
+          },
+          {
+            path: "mange-review",
+            element: <ReviewManage />,
+          },
+          {
+            path: "mange-review/:courseId", // nested review page
+            element: <AllReviewAndMange />,
           },
           {
             path: "manage-courses",

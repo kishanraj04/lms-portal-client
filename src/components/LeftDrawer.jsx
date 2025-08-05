@@ -12,12 +12,14 @@ import { Link } from "react-router-dom";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline"; 
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import RateReviewIcon from "@mui/icons-material/RateReview";
 
 const LeftDrawer = ({ isMobile, onClose, setDrawerOpen }) => {
   const menuItems = [
     { text: "Create Course", icon: <AddCircleOutlineIcon />, color: "red" },
     { text: "Manage Courses", icon: <MenuBookIcon />, color: "blue" },
-    {text:"Enrolled Student" , icon:<VisibilityIcon/>, color:"gray"}
+    {text:"Enrolled Student" , icon:<VisibilityIcon/>, color:"gray"},
+    {text:"Mange Review" , icon:<RateReviewIcon/>,color:"orange"}
   ];
   return (
     <Box
