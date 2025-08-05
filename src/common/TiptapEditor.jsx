@@ -11,7 +11,8 @@ import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
 import FormatAlignCenterIcon from "@mui/icons-material/FormatAlignCenter";
 import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
 
-const TiptapEditor = ({ description, setDescription }) => {
+const TiptapEditor = ({ description, setDescription,data }) => {
+  // console.log(description);
   const editor = useEditor({
     extensions: [
       StarterKit,

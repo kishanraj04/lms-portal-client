@@ -151,6 +151,13 @@ export const courseApi = createApi({
         method:"POST",
         body:data
       })
+    }),
+
+    getReview:builder.query({
+      query:(courseId)=>({
+        url:`/course/review/${courseId}`,
+        method:"GET"
+      })
     })
   }),
 });
@@ -173,5 +180,6 @@ export const {
   useUserLearningProgressQuery,
   useExploreCoursesQuery,
   useMyEnrolledCourseQuery,
-  useGiveFeedBackMutation
+  useGiveFeedBackMutation,
+  useGetReviewQuery
 } = courseApi;

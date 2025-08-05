@@ -34,7 +34,8 @@ const EditCourse = () => {
     data: course,
     isError: isCourseError,
     isLoading: isCourseLoading,
-  } = useGetCourseByIdQuery(id);
+  } = useGetCourseByIdQuery(id,{refetchOnMountOrArgChange:true});
+  console.log(course);
   useEffect(() => {
     if (course) {
       Object.entries(course?.course).forEach(([key, value]) => {

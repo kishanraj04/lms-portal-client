@@ -14,10 +14,12 @@ import {
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   useGetCourseWithPurchaseStatusQuery,
+  useGetReviewQuery,
   useMakeCheckoutSessionMutation,
 } from "../store/api/courseApi";
 import { toast } from "react-toastify";
 import { Link as RouterLink } from 'react-router-dom';
+import ReviewCarousel from "../common/ReviewCarousel";
 
 export default function CourseDetail() {
   const { courseId } = useParams();
@@ -27,10 +29,12 @@ export default function CourseDetail() {
     courseId,
     { refetchOnMountOrArgChange: true }
   );
+  const {data:courseReview,reviewResp} = useGetReviewQuery(courseId,{refetchOnMountOrArgChange:true})
+  console.log("course ",courseReview?.reviews);
   const navigate = useNavigate()
   useEffect(()=>{
     if(data?.purchased){
-      console.log(courseId);
+      // console.log(courseId);
       navigate(`/course-progress/${courseId}`)
     }
   },[data])
@@ -168,6 +172,12 @@ export default function CourseDetail() {
               data?.course?.lectures?.map(({lectureTitle})=><Typography variant="body2">▶ {lectureTitle}</Typography>)
             }
           </Paper>
+
+          {/* review */}
+          <Box sx={{padding:2,width:"100%"}}>
+            <h2 style={{color:"red" , fontWeight:"bold"}}>Student Review</h2>
+            <ReviewCarousel reviews={courseReview?.reviews}/>
+          </Box>
         </Box>
       </Box>
     </Box>
