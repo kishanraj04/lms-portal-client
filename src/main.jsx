@@ -27,6 +27,7 @@ import Explore from "./pages/Explore.jsx";
 import FeedBack from "./pages/FeedBack.jsx";
 import ReviewManage from "./components/admin/ReviewManage.jsx";
 import AllReviewAndMange from "./components/admin/AllReviewAndMange.jsx";
+import Chat from "./pages/Chat.jsx";
 const route = createBrowserRouter([
   {
     path: "/auth",
@@ -113,6 +114,10 @@ const route = createBrowserRouter([
             element: <EnrolledStudentdetails />,
           },
         ],
+      },
+      {
+        path:"/chat",
+        element:<Chat/>
       },
       {
         path: "account",

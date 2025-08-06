@@ -36,6 +36,7 @@ export default function CourseProgress() {
   const [isResource,setIsResource] = useState(false);
   const course = data?.course;
   const purchased = data?.purchased;
+ 
   useEffect(() => {
     if (purchased === false) {
       navigate(`/course/detail/${courseId}`);

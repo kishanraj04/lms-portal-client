@@ -28,6 +28,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import FeedbackIcon from "@mui/icons-material/Feedback";
+import ChatIcon from "@mui/icons-material/Chat";
 
 const settingsWithIcons = [
   { name: "Home", icon: <Home fontSize="small" />, color: "red" },
@@ -37,6 +38,7 @@ const settingsWithIcons = [
     color: "blue",
   },
   { name: "Learning", icon: <SchoolIcon fontSize="small" />, color: "gray" },
+  { name: "Chat", icon: <ChatIcon fontSize="small" />, color: "#bf0dbf" },
   {
     name: "DashBoard",
     icon: <DashboardIcon fontSize="small" />,
@@ -69,8 +71,9 @@ function Header() {
     else if (name === "DashBoard") navigate("/dashboard");
     else if (name === "Learning") navigate("/learning");
     else if (name === "Logout") logoutUserHelper(logoutUser);
-    else if (name === "Feedback") navigate("/feedback")
+    else if (name === "Feedback") navigate("/feedback");
     else if (name === "Home") navigate("/");
+    else if(name==="Chat") navigate("/chat")
   };
 
   return (
