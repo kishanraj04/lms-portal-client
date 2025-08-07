@@ -34,6 +34,7 @@ const ManageCourseTable = () => {
     }
   },[makeCoursePublicResp])
 
+
   return (
     <>
     {
@@ -154,6 +155,7 @@ const ManageCourseTable = () => {
                         }}
                       >
                         <CheckCircleIcon onClick={async()=>{
+                         
                           const resp = await makeCoursePublicApi({courseId:course?._id,isPublish:false})
                           if(resp?.data?.success) toast.success("course unpublish")
                           

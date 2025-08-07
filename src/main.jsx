@@ -28,6 +28,7 @@ import FeedBack from "./pages/FeedBack.jsx";
 import ReviewManage from "./components/admin/ReviewManage.jsx";
 import AllReviewAndMange from "./components/admin/AllReviewAndMange.jsx";
 import Chat from "./pages/Chat.jsx";
+import { SocketProvider } from "./context/socketprovider.jsx";
 const route = createBrowserRouter([
   {
     path: "/auth",
@@ -133,7 +134,9 @@ const route = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <Provider store={store}>
+    <SocketProvider>
     <RouterProvider router={route} />
+    </SocketProvider>
     <ToastContainer position="top-right" autoClose={1000} />
   </Provider>
 );

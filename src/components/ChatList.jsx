@@ -1,21 +1,30 @@
-import React from 'react';
-import { List, ListItem, ListItemText, Divider } from '@mui/material';
+// ChatList.jsx
+import React from "react";
+import {
+  Avatar,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Box,
+} from "@mui/material";
 
-const users = ['Alice', 'Bob', 'Charlie'];
-
-function ChatList({ onSelect }) {
+const ChatList = ({ group = [], onSelectGroup }) => {
+  console.log(group);
   return (
-    <List>
-      {users.map((user, index) => (
-        <div key={user}>
-          <ListItem button onClick={() => onSelect(user)}>
-            <ListItemText primary={user} />
+    <Box sx={{ overflowY: "auto", maxHeight: "100%" }}>
+      <List>
+        {group?.group?.map((g) => (
+          <ListItem button key={g?._id} onClick={() => onSelectGroup(g)} sx={{boxShadow:1}}>
+            <ListItemAvatar>
+              <Avatar src={g?.groupTheam} alt={g?.groupName} />
+            </ListItemAvatar>
+            <ListItemText primary={g?.groupName} />
           </ListItem>
-          {index < users.length - 1 && <Divider />}
-        </div>
-      ))}
-    </List>
+        ))}
+      </List>
+    </Box>
   );
-}
+};
 
 export default ChatList;

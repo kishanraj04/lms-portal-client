@@ -1,264 +1,100 @@
-import React, { useState } from 'react';
+// ChatPage.jsx
+import React, { useState } from "react";
 import {
   Box,
+  Drawer,
   IconButton,
   useMediaQuery,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
+  useTheme,
+  AppBar,
+  Toolbar,
   Typography,
-  Stack,
-  TextField,
-  Button,
-  Avatar,
-  Fade,
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import SendIcon from '@mui/icons-material/Send';
-const users = ['Alice', 'Bob', 'Charlie'];
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import { useGetGroupQuery } from "../store/api/groupApi";
+import ChatList from "../components/ChatList";
+import ChatWindow from "../components/ChatWindow";
 
-function ChatPage() {
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [showChatList, setShowChatList] = useState(true);
-  const isMobile = useMediaQuery('(max-width:768px)');
+const ChatPage = () => {
+  const [selectedGroup, setSelectedGroup] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const handleUserSelect = (user) => {
-    setSelectedUser(user);
-    if (isMobile) setShowChatList(false);
+  const { data: group = [] } = useGetGroupQuery();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const handleSelectGroup = (group) => {
+    setSelectedGroup(group);
+    if (isMobile) setDrawerOpen(false); // close drawer on mobile
   };
-
-  const handleBack = () => {
-    setShowChatList(true);
-    setSelectedUser(null);
-  };
-
-  const ChatList = () => (
-    <Box
-      sx={{
-        height: '100%',
-        bgcolor: '#fff',
-        borderRadius: 2,
-        boxShadow: 2,
-        overflowY: 'auto',
-      }}
-    >
-      <List sx={{ width: '100%' }}>
-        {users.map((user, index) => (
-          <div key={user}>
-            <ListItem
-              button
-              onClick={() => handleUserSelect(user)}
-              sx={{
-                '&:hover': { backgroundColor: '#f5f5f5' },
-                px: 2,
-                py: 1.5,
-              }}
-            >
-              <Avatar sx={{ mr: 2 }}>{user[0]}</Avatar>
-              <ListItemText
-                primary={user}
-                primaryTypographyProps={{ fontWeight: 'bold' }}
-              />
-            </ListItem>
-            {index < users.length - 1 && <Divider />}
-          </div>
-        ))}
-      </List>
-    </Box>
-  );
-
-  const ChatWindow = () => (
-    <Box
-      sx={{
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        bgcolor: '#fff',
-        borderRadius: 2,
-        boxShadow: 2,
-        overflow: 'hidden',
-      }}
-    >
-      {/* Header */}
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          p: 1.5,
-          bgcolor: '#404548ff',
-          color: '#fff',
-          position: 'relative',
-        }}
-      >
-        {isMobile && (
-          <IconButton
-            onClick={handleBack}
-            sx={{
-              position: 'absolute',
-              left: -9,
-              color: '#fff',
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-        )}
-      </Box>
-
-      {/* Messages area */}
-      <Box
-        sx={{
-          flexGrow: 1,
-          bgcolor: '#f4f7fb',
-          p: 2,
-          overflowY: 'auto',
-        }}
-      >
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 1.5,
-          }}
-        >
-          <Box
-            sx={{
-              alignSelf: 'flex-start',
-              bgcolor: '#fff',
-              p: 1,
-              px: 2,
-              borderRadius: 2,
-              maxWidth: '70%',
-              boxShadow: 1,
-            }}
-          >
-            Hi {selectedUser}
-          </Box>
-          <Box
-            sx={{
-              alignSelf: 'flex-start',
-              bgcolor: '#fff',
-              p: 1,
-              px: 2,
-              borderRadius: 2,
-              maxWidth: '70%',
-              boxShadow: 1,
-            }}
-          >
-            How are you?
-          </Box>
-        </Box>
-      </Box>
-
-      {/* Input area */}
-  
-
-<Box
-  sx={{
-    p: 1.5,
-    borderTop: '1px solid #e0e0e0',
-    bgcolor: '#f9fafb',
-    boxShadow: '0 -1px 5px rgba(0,0,0,0.05)',
-  }}
->
-  <Stack
-    direction="row"
-    // spacing={1}
-    alignItems="center"
-    sx={{
-      bgcolor: '#fff',
-    //   p: 1,
-      borderRadius: '10px',
-    //   boxShadow: 1,
-    }}
-  >
-    <TextField
-      variant="standard"
-      placeholder="Type a message..."
-      fullWidth
-      InputProps={{
-        disableUnderline: true,
-        // sx: { px: 1 },
-      }}
-    />
-    <IconButton
-      color="primary"
-      sx={{
-        bgcolor: '#1976d2',
-        color: '#fff',
-        '&:hover': { bgcolor: '#115293' },
-        borderRadius: '50%',
-        width: 30,
-        height: 30,
-      }}
-    >
-      <SendIcon />
-    </IconButton>
-  </Stack>
-</Box>
-
-    </Box>
-  );
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        height: '100vh',
-        flexDirection: isMobile ? 'column' : 'row',
-        bgcolor: '#eaeef1',
-        p: isMobile ? 1 : 2,
-        gap: 2,
-      }}
-    >
-      {/* Desktop Layout */}
-      {!isMobile && (
-        <>
-          <Box sx={{ width: '30%', height: '100%' }}>
-            <ChatList />
-          </Box>
-          <Box sx={{ flex: 1, height: '100%' }}>
-            {selectedUser ? (
-              <ChatWindow />
-            ) : (
-              <Box
-                sx={{
-                  height: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 20,
-                  color: '#888',
-                  bgcolor: '#fff',
-                  borderRadius: 2,
-                  boxShadow: 2,
-                }}
-              >
-                Select a user to start chatting.
-              </Box>
-            )}
-          </Box>
-        </>
-      )}
-
-      {/* Mobile Layout */}
+    <Box sx={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+      {/* AppBar for mobile */}
       {isMobile && (
-        <>
-          <Fade in={showChatList} timeout={300} unmountOnExit>
-            <Box sx={{ flex: 1, height: '100%' }}>
-              <ChatList />
-            </Box>
-          </Fade>
-
-          <Fade in={!showChatList} timeout={300} unmountOnExit>
-            <Box sx={{ flex: 1, height: '100%' }}>
-              <ChatWindow />
-            </Box>
-          </Fade>
-        </>
+         <MenuIcon onClick={() => setDrawerOpen(true)}/>
       )}
+
+      {/* Main Content */}
+      <Box sx={{ flexGrow: 1, display: "flex", height: "100%",position:"relative"}}>
+        {/* Sidebar for Desktop */}
+        {!isMobile && (
+          <Box
+            sx={{
+              width: 300,
+              borderRight: "1px solid #ccc",
+              overflowY: "auto"
+            }}
+          >
+            <ChatList group={group} onSelectGroup={handleSelectGroup} />
+          </Box>
+        )}
+
+        {/* Drawer for Mobile */}
+        {isMobile && (
+          <Drawer
+            anchor="left"
+            open={drawerOpen}
+            onClose={() => setDrawerOpen(false)}
+            ModalProps={{ keepMounted: true }}
+            PaperProps={{
+              sx: {
+                width:"100%",
+                maxHeight: "100%",
+                display: "flex",
+                flexDirection: "column",
+                position:"absolute",
+                top:"60px",
+                backgroundColor:"gray"
+              },
+            }}
+          >
+            <Box sx={{ flexGrow: 1, overflowY: "auto" }}>
+              <ChatList group={group} onSelectGroup={handleSelectGroup} />
+            </Box>
+          </Drawer>
+        )}
+
+        {/* Chat Window */}
+        <Box
+          sx={{
+            flexGrow: 1,
+            overflow: "auto",
+        
+            transition: "all 0.3s ease-in-out",
+          }}
+        >
+          {selectedGroup ? (
+            <ChatWindow group={selectedGroup} />
+          ) : (
+            <Typography variant="h6" sx={{ textAlign: "center", mt: 4 }}>
+              Select a chat to start messaging
+            </Typography>
+          )}
+        </Box>
+      </Box>
     </Box>
   );
-}
+};
 
 export default ChatPage;
