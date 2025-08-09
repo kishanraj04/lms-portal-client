@@ -14,10 +14,18 @@ export const groupApi = createApi({
         url:"/group",
         method:"GET"
       })
+     }),
+
+     getGroupMessage:builder.query({
+      query:(groupId)=>({
+        url:`/message/${groupId}`,
+        method:"GET"
+      })
      })
   })
 });
 
 export const {
-  useGetGroupQuery
+  useGetGroupQuery,
+  useGetGroupMessageQuery
 } = groupApi;

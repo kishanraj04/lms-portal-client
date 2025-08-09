@@ -66,7 +66,7 @@ export const AuthPage = () => {
       setIsDirectLogin(false)
     }
      } catch (error) {
-       console.log(error?.message); 
+       toast.error("somethig went wrong")
      }
     })()
    
@@ -112,8 +112,10 @@ export const AuthPage = () => {
 // LoginForm
 const LoginForm = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
-  const [loginApi] = useLoginUserMutation();
+  const [loginApi,loginResp] = useLoginUserMutation();
   const navigate = useNavigate();
+
+
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });

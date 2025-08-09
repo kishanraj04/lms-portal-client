@@ -29,6 +29,7 @@ import ReviewManage from "./components/admin/ReviewManage.jsx";
 import AllReviewAndMange from "./components/admin/AllReviewAndMange.jsx";
 import Chat from "./pages/Chat.jsx";
 import { SocketProvider } from "./context/socketprovider.jsx";
+import { GlobalProvider } from "./context/globalcontext.jsx";
 const route = createBrowserRouter([
   {
     path: "/auth",
@@ -117,8 +118,8 @@ const route = createBrowserRouter([
         ],
       },
       {
-        path:"/chat",
-        element:<Chat/>
+        path: "/chat",
+        element: <Chat />,
       },
       {
         path: "account",
@@ -134,9 +135,11 @@ const route = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <Provider store={store}>
-    <SocketProvider>
-    <RouterProvider router={route} />
-    </SocketProvider>
+    <GlobalProvider>
+      <SocketProvider>
+        <RouterProvider router={route} />
+      </SocketProvider>
+    </GlobalProvider>
     <ToastContainer position="top-right" autoClose={1000} />
   </Provider>
 );

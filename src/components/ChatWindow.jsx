@@ -1,32 +1,101 @@
-import React, { useState } from "react";
-import { Box, Typography, Paper, TextField, IconButton } from "@mui/material";
+import React, { useContext, useState } from "react";
+import {
+  Box,
+  Typography,
+  Paper,
+  TextField,
+  IconButton,
+  Stack,
+  Avatar,
+} from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
+import { SocketContext } from "../context/socketprovider";
+import { useGetGroupMessageQuery } from "../store/api/groupApi";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
 const ChatWindow = ({ group }) => {
   const [message, setMessage] = useState("");
+  const socket = useContext(SocketContext);
+  const { groupId, roomId } = group;
+  const { _id: userId } = useSelector((state) => state?.user?.user);
+  const { data: groupMessage, messageResp } = useGetGroupMessageQuery(groupId, {
+    refetchOnMountOrArgChange: true,
+  });
+
+  const [msg,setMsg] = useState([])
+
+  useEffect(()=>{
+    setMsg(groupMessage?.message)
+  },[groupMessage])
+  console.log(msg);
+  useEffect(() => {
+    socket.emit("join-room", roomId);
+
+    const handleMessage = (msg) => {
+      console.log(msg);
+       setMsg((prev)=>[...prev,msg?.message])
+    };
+
+    socket.on("msg-from-server", handleMessage);
+
+    return () => {
+      socket.off("msg-from-server", handleMessage);
+    };
+  }, [socket, roomId]);
 
   const handleSend = () => {
     if (!message.trim()) return;
-    console.log("Sending:", message); // Replace with actual send logic
-    setMessage(""); // Clear input
+    const messagetosend = {
+      content: message,
+      groupId: group?.groupId,
+      roomId,
+    };
+    socket.emit("message", messagetosend);
+    setMessage("");
   };
 
   return (
-    <Box sx={{ p: 2, height: "94%", display: "flex", flexDirection: "column"}}>
-      {/* Chat messages */}
-      <Box sx={{ flexGrow: 1, overflowY: "auto" }}>
-        <Typography variant="h6" gutterBottom>
-          Chatting with {group?.name}
-        </Typography>
-        <Paper elevation={1} sx={{ p: 2, maxWidth: "70%", mb: 1 }}>
-          Hi there! 👋
-        </Paper>
-        <Paper
-          elevation={1}
-          sx={{ p: 2, maxWidth: "70%", ml: "auto", mb: 1, bgcolor: "#e0f7fa" }}
-        >
-          Hello! How can I help?
-        </Paper>
+    <Box sx={{ p: 2, height: "94%", display: "flex", flexDirection: "column" }}>
+      <Box sx={{ flexGrow: 1, overflowY: "auto", p: 1 }}>
+        {msg?.map(({ content, sender, _id }) => {
+          const isOwnMessage = sender?._id === userId; // <-- your logged-in user ID
+          return (
+            <Stack
+              key={_id}
+              direction="row"
+              spacing={1}
+              alignItems="flex-start"
+              justifyContent={isOwnMessage ? "flex-end" : "flex-start"}
+              sx={{ mb: 1 }}
+            >
+              {!isOwnMessage && (
+                <Avatar
+                  alt={sender?.name}
+                  src={sender?.avatar}
+                  sx={{ width: 24, height: 24 }}
+                />
+              )}
+
+              <Box
+                sx={{
+                  backgroundColor: isOwnMessage ? "#DCF8C6" : "#F1F1F1",
+                  px: 1.5,
+                  py: 1,
+                  borderRadius: 2,
+                  maxWidth: "70%",
+                }}
+              >
+                {!isOwnMessage && (
+                  <Typography variant="caption" color="text.secondary">
+                    {sender?.name}
+                  </Typography>
+                )}
+                <Typography variant="body2">{content}</Typography>
+              </Box>
+            </Stack>
+          );
+        })}
       </Box>
 
       {/* Message input field */}
