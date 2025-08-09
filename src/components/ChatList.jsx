@@ -1,5 +1,5 @@
 // ChatList.jsx
-import React from "react";
+import React, { useContext } from "react";
 import {
   Avatar,
   List,
@@ -9,10 +9,11 @@ import {
   Box,
   Typography,
 } from "@mui/material";
+import { GlobalContext } from "../context/globalcontext";
 
 const ChatList = ({ group = [], onSelectGroup }) => {
   // const
-
+   const {setMsgCount,msgcount} = useContext(GlobalContext)
   return (
     <Box sx={{ overflowY: "auto", maxHeight: "100%" }}>
       <List>

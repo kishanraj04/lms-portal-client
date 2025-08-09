@@ -1,8 +1,7 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   Box,
   Typography,
-  Paper,
   TextField,
   IconButton,
   Stack,
@@ -12,29 +11,42 @@ import SendIcon from "@mui/icons-material/Send";
 import { SocketContext } from "../context/socketprovider";
 import { useGetGroupMessageQuery } from "../store/api/groupApi";
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
+import { GlobalContext } from "../context/globalcontext";
 
 const ChatWindow = ({ group }) => {
   const [message, setMessage] = useState("");
+  const [msg, setMsg] = useState([]);
   const socket = useContext(SocketContext);
+  const { setMsgCount } = useContext(GlobalContext);
+
   const { groupId, roomId } = group;
   const { _id: userId } = useSelector((state) => state?.user?.user);
-  const { data: groupMessage, messageResp } = useGetGroupMessageQuery(groupId, {
+
+  // Fetch existing messages from DB
+  const { data: groupMessage } = useGetGroupMessageQuery(groupId, {
     refetchOnMountOrArgChange: true,
   });
 
-  const [msg,setMsg] = useState([])
-
-  useEffect(()=>{
-    setMsg(groupMessage?.message)
-  },[groupMessage])
-  console.log(msg);
+  // Update state when DB messages change
   useEffect(() => {
-    socket.emit("join-room", roomId);
+    if (groupMessage?.message) {
+      setMsg(groupMessage.message);
+    }
+  }, [groupMessage]);
 
-    const handleMessage = (msg) => {
-      console.log(msg);
-       setMsg((prev)=>[...prev,msg?.message])
+  // Join room when roomId changes
+  useEffect(() => {
+    if (roomId) {
+      socket.emit("join-room", roomId);
+    }
+  }, [socket, roomId]);
+
+  // Attach socket listener only once
+  useEffect(() => {
+    const handleMessage = (msgData) => {
+      console.log("Message received:", msgData);
+      setMsg((prev) => [...prev, msgData?.message]);
+      setMsgCount((prev) => prev + 1);
     };
 
     socket.on("msg-from-server", handleMessage);
@@ -42,24 +54,31 @@ const ChatWindow = ({ group }) => {
     return () => {
       socket.off("msg-from-server", handleMessage);
     };
-  }, [socket, roomId]);
+  }, [socket, setMsgCount]);
 
+  // Send message to server
   const handleSend = () => {
     if (!message.trim()) return;
+
     const messagetosend = {
       content: message,
-      groupId: group?.groupId,
+      group: groupId,
       roomId,
     };
+
     socket.emit("message", messagetosend);
     setMessage("");
   };
 
   return (
     <Box sx={{ p: 2, height: "94%", display: "flex", flexDirection: "column" }}>
+      {/* Message list */}
       <Box sx={{ flexGrow: 1, overflowY: "auto", p: 1 }}>
-        {msg?.map(({ content, sender, _id }) => {
-          const isOwnMessage = sender?._id === userId; // <-- your logged-in user ID
+        {msg?.map(({ content, sender, _id, group: grpId }) => {
+          const isOwnMessage = sender?._id === userId;
+
+          if (grpId !== groupId) return null; // Only show messages for this group
+
           return (
             <Stack
               key={_id}
@@ -98,7 +117,7 @@ const ChatWindow = ({ group }) => {
         })}
       </Box>
 
-      {/* Message input field */}
+      {/* Message input */}
       <Box
         sx={{
           display: "flex",
