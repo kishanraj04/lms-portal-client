@@ -27,26 +27,32 @@ const ChatPage = () => {
     setSelectedGroup(group);
     if (isMobile) setDrawerOpen(false); // close drawer on mobile
   };
+  console.log(selectedGroup);
 
   return (
     <Box sx={{ height: "100vh", display: "flex", flexDirection: "column" }}>
       {/* AppBar for mobile */}
-      {isMobile && (
-         <MenuIcon onClick={() => setDrawerOpen(true)}/>
-      )}
+      {isMobile && <MenuIcon onClick={() => setDrawerOpen(true)} />}
 
       {/* Main Content */}
-      <Box sx={{ flexGrow: 1, display: "flex", height: "100%",position:"relative"}}>
+      <Box
+        sx={{
+          flexGrow: 1,
+          display: "flex",
+          height: "100%",
+          position: "relative",
+        }}
+      >
         {/* Sidebar for Desktop */}
         {!isMobile && (
           <Box
             sx={{
               width: 300,
               borderRight: "1px solid #ccc",
-              overflowY: "auto"
+              overflowY: "auto",
             }}
           >
-            <ChatList group={group} onSelectGroup={handleSelectGroup} />
+            <ChatList group={group} onSelectGroup={handleSelectGroup} selectedGroup={selectedGroup}/>
           </Box>
         )}
 
@@ -59,18 +65,22 @@ const ChatPage = () => {
             ModalProps={{ keepMounted: true }}
             PaperProps={{
               sx: {
-                width:"100%",
+                width: "100%",
                 maxHeight: "100%",
                 display: "flex",
                 flexDirection: "column",
-                position:"absolute",
-                top:"60px",
-                backgroundColor:"gray"
+                position: "absolute",
+                top: "60px",
+                backgroundColor: "gray",
               },
             }}
           >
             <Box sx={{ flexGrow: 1, overflowY: "auto" }}>
-              <ChatList group={group} onSelectGroup={handleSelectGroup} />
+              <ChatList
+                group={group}
+                onSelectGroup={handleSelectGroup}
+                selectedGroup={selectedGroup}
+              />
             </Box>
           </Drawer>
         )}
@@ -80,7 +90,7 @@ const ChatPage = () => {
           sx={{
             flexGrow: 1,
             overflow: "auto",
-        
+
             transition: "all 0.3s ease-in-out",
           }}
         >

@@ -11,9 +11,10 @@ import {
 } from "@mui/material";
 import { GlobalContext } from "../context/globalcontext";
 
-const ChatList = ({ group = [], onSelectGroup }) => {
+const ChatList = ({ group = [], onSelectGroup, selectedGroup }) => {
   // const
-   const {setMsgCount,msgcount} = useContext(GlobalContext)
+  const { gmsgCounst,setGMsgCount,msgcount,setMsgCount} = useContext(GlobalContext);
+  //  console.log(msgcount);
   return (
     <Box sx={{ overflowY: "auto", maxHeight: "100%" }}>
       <List>
@@ -21,12 +22,20 @@ const ChatList = ({ group = [], onSelectGroup }) => {
           <ListItem
             key={g?._id}
             component="button"
-            onClick={() => onSelectGroup(g)}
+            onClick={() => {
+              // Reset unread count for this group
+              setMsgCount((prev) => ({ ...prev, [g.groupId]: 0 }));
+              setGMsgCount((prev) => ({ ...prev, [g.groupId]: 0 }));
+              onSelectGroup(g);
+            }}
             sx={{
               boxShadow: 1,
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
+              bgcolor: `${
+                selectedGroup?.groupId !== g?.groupId ? "gray" : "brown"
+              }`,
               p: 1,
               cursor: "pointer",
               "&:hover": { backgroundColor: "gray" },
@@ -39,9 +48,25 @@ const ChatList = ({ group = [], onSelectGroup }) => {
               <ListItemText primary={g?.groupName} />
             </Box>
 
-            <Typography variant="body2" color="green" sx={{marginRight:2}}>
-              0
-            </Typography>
+            {gmsgCounst[g.groupId] > 0 && (
+              <Typography
+                variant="body2"
+                sx={{
+                  background: "red",
+                  color: "white",
+                  borderRadius: "50%",
+                  width: 20,
+                  height: 20,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  fontSize: "0.8rem",
+                  marginRight: 2,
+                }}
+              >
+                {gmsgCounst[g.groupId]}
+              </Typography>
+            )}
           </ListItem>
         ))}
       </List>

@@ -17,8 +17,8 @@ const ChatWindow = ({ group }) => {
   const [message, setMessage] = useState("");
   const [msg, setMsg] = useState([]);
   const socket = useContext(SocketContext);
-  const { setMsgCount } = useContext(GlobalContext);
-
+  const { setMsgCount ,gmsgCounst,setGMsgCount} = useContext(GlobalContext);
+  console.log(gmsgCounst);
   const { groupId, roomId } = group;
   const { _id: userId } = useSelector((state) => state?.user?.user);
 
@@ -42,19 +42,25 @@ const ChatWindow = ({ group }) => {
   }, [socket, roomId]);
 
   // Attach socket listener only once
-  useEffect(() => {
-    const handleMessage = (msgData) => {
-      console.log("Message received:", msgData);
+useEffect(() => {
+  const handleMessage = (msgData) => {
+    const incomingGroupId = msgData?.message?.group;
+
+    if (incomingGroupId === groupId) {
       setMsg((prev) => [...prev, msgData?.message]);
-      setMsgCount((prev) => prev + 1);
-    };
+      setGMsgCount((prev) => ({ ...prev, [incomingGroupId]: 0 }));
+    } else {
+      setGMsgCount((prev) => ({
+        ...prev,
+        [incomingGroupId]: (prev[incomingGroupId] || 0) + 1,
+      }));
+    }
+  };
 
-    socket.on("msg-from-server", handleMessage);
+  socket.on("msg-from-server", handleMessage);
+  return () => socket.off("msg-from-server", handleMessage);
+}, [socket, groupId, setGMsgCount]);
 
-    return () => {
-      socket.off("msg-from-server", handleMessage);
-    };
-  }, [socket, setMsgCount]);
 
   // Send message to server
   const handleSend = () => {
