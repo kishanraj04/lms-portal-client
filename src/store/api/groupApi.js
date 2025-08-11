@@ -21,11 +21,19 @@ export const groupApi = createApi({
         url:`/message/${groupId}`,
         method:"GET"
       })
+     }),
+
+     getMyGroup:builder.query({
+      query:()=>({
+        url:"/group/me",
+        method:"GET"
+      })
      })
   })
 });
 
 export const {
   useGetGroupQuery,
-  useGetGroupMessageQuery
+  useGetGroupMessageQuery,
+  useGetMyGroupQuery
 } = groupApi;

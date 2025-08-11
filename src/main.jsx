@@ -30,6 +30,7 @@ import AllReviewAndMange from "./components/admin/AllReviewAndMange.jsx";
 import Chat from "./pages/Chat.jsx";
 import { SocketProvider } from "./context/socketprovider.jsx";
 import { GlobalProvider } from "./context/globalcontext.jsx";
+import ManageGroup from "./components/admin/ManageGroup.jsx";
 const route = createBrowserRouter([
   {
     path: "/auth",
@@ -94,6 +95,10 @@ const route = createBrowserRouter([
           {
             path: "manage-courses/:id",
             element: <EditCourse />,
+          },
+          {
+            path:"manage-group",
+            element:<ManageGroup/>
           },
           {
             path: "manage-courses/vedio/upload/:id",

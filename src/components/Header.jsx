@@ -73,7 +73,7 @@ function Header() {
     else if (name === "Logout") logoutUserHelper(logoutUser);
     else if (name === "Feedback") navigate("/feedback");
     else if (name === "Home") navigate("/");
-    else if(name==="Chat") navigate("/chat")
+    else if (name === "Chat") navigate("/chat");
   };
 
   return (
@@ -86,18 +86,22 @@ function Header() {
             variant="h6"
             noWrap
             component={Link}
-            to={"/"}
+            to="/"
             sx={{
               mr: 2,
               display: "flex",
               fontFamily: "monospace",
               fontWeight: 700,
-              letterSpacing: ".3rem",
+              letterSpacing: ".1rem",
               color: "inherit",
               textDecoration: "none",
+              "& > span:first-of-type": {
+                color: "red",
+                borderRadius: 1,
+              },
             }}
           >
-            LOGO
+            <span>Skill</span>Bridge
           </Typography>
 
           {/* Center space filler */}

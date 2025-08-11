@@ -13,13 +13,15 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import RateReviewIcon from "@mui/icons-material/RateReview";
+import ForumIcon from '@mui/icons-material/Forum';
 
 const LeftDrawer = ({ isMobile, onClose, setDrawerOpen }) => {
   const menuItems = [
     { text: "Create Course", icon: <AddCircleOutlineIcon />, color: "red" },
     { text: "Manage Courses", icon: <MenuBookIcon />, color: "blue" },
     {text:"Enrolled Student" , icon:<VisibilityIcon/>, color:"gray"},
-    {text:"Mange Review" , icon:<RateReviewIcon/>,color:"orange"}
+    {text:"Mange Review" , icon:<RateReviewIcon/>,color:"orange"},
+    {text:"Manage Group" , icon:<ForumIcon/>,color:"green"}
   ];
   return (
     <Box
