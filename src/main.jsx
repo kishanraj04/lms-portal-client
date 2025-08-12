@@ -31,6 +31,7 @@ import Chat from "./pages/Chat.jsx";
 import { SocketProvider } from "./context/socketprovider.jsx";
 import { GlobalProvider } from "./context/globalcontext.jsx";
 import ManageGroup from "./components/admin/ManageGroup.jsx";
+import ManageStudents from "./components/admin/ManageStudents.jsx";
 const route = createBrowserRouter([
   {
     path: "/auth",
@@ -85,7 +86,11 @@ const route = createBrowserRouter([
             element: <ReviewManage />,
           },
           {
-            path: "mange-review/:courseId", // nested review page
+            path:"manage-group/manage-students/:groupId",
+            element:<ManageStudents/>
+          },
+          {
+            path: "mange-review/:courseId", 
             element: <AllReviewAndMange />,
           },
           {

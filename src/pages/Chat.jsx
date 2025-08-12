@@ -20,6 +20,7 @@ const ChatPage = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const { data: group = [] } = useGetGroupQuery();
+  console.log(group?.allowToSend);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -30,7 +31,7 @@ const ChatPage = () => {
   console.log(selectedGroup);
 
   return (
-    <Box sx={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+    <Box sx={{ height: "100vh", display: "flex", flexDirection: "column",overflow:"hidden" }}>
       {/* AppBar for mobile */}
       {isMobile && <MenuIcon onClick={() => setDrawerOpen(true)} />}
 
@@ -95,7 +96,7 @@ const ChatPage = () => {
           }}
         >
           {selectedGroup ? (
-            <ChatWindow group={selectedGroup} />
+            <ChatWindow group={selectedGroup} allowToSendMsg={group?.allowToSend}/>
           ) : (
             <Typography variant="h6" sx={{ textAlign: "center", mt: 4 }}>
               Select a chat to start messaging

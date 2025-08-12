@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import {
   Box,
   Typography,
@@ -13,12 +13,11 @@ import { useGetGroupMessageQuery } from "../store/api/groupApi";
 import { useSelector } from "react-redux";
 import { GlobalContext } from "../context/globalcontext";
 
-const ChatWindow = ({ group }) => {
+const ChatWindow = ({ group, allowToSendMsg }) => {
   const [message, setMessage] = useState("");
   const [msg, setMsg] = useState([]);
   const socket = useContext(SocketContext);
-  const { setMsgCount ,gmsgCounst,setGMsgCount} = useContext(GlobalContext);
-  console.log(gmsgCounst);
+  const { setMsgCount, gmsgCounst, setGMsgCount } = useContext(GlobalContext);
   const { groupId, roomId } = group;
   const { _id: userId } = useSelector((state) => state?.user?.user);
 
@@ -26,6 +25,9 @@ const ChatWindow = ({ group }) => {
   const { data: groupMessage } = useGetGroupMessageQuery(groupId, {
     refetchOnMountOrArgChange: true,
   });
+
+  // Ref to scroll to bottom of messages
+  const messagesEndRef = useRef(null);
 
   // Update state when DB messages change
   useEffect(() => {
@@ -42,25 +44,31 @@ const ChatWindow = ({ group }) => {
   }, [socket, roomId]);
 
   // Attach socket listener only once
-useEffect(() => {
-  const handleMessage = (msgData) => {
-    const incomingGroupId = msgData?.message?.group;
+  useEffect(() => {
+    const handleMessage = (msgData) => {
+      const incomingGroupId = msgData?.message?.group;
 
-    if (incomingGroupId === groupId) {
-      setMsg((prev) => [...prev, msgData?.message]);
-      setGMsgCount((prev) => ({ ...prev, [incomingGroupId]: 0 }));
-    } else {
-      setGMsgCount((prev) => ({
-        ...prev,
-        [incomingGroupId]: (prev[incomingGroupId] || 0) + 1,
-      }));
+      if (incomingGroupId === groupId) {
+        setMsg((prev) => [...prev, msgData?.message]);
+        setGMsgCount((prev) => ({ ...prev, [incomingGroupId]: 0 }));
+      } else {
+        setGMsgCount((prev) => ({
+          ...prev,
+          [incomingGroupId]: (prev[incomingGroupId] || 0) + 1,
+        }));
+      }
+    };
+
+    socket.on("msg-from-server", handleMessage);
+    return () => socket.off("msg-from-server", handleMessage);
+  }, [socket, groupId, setGMsgCount]);
+
+  // Auto-scroll to bottom whenever messages change
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  };
-
-  socket.on("msg-from-server", handleMessage);
-  return () => socket.off("msg-from-server", handleMessage);
-}, [socket, groupId, setGMsgCount]);
-
+  }, [msg]);
 
   // Send message to server
   const handleSend = () => {
@@ -77,9 +85,34 @@ useEffect(() => {
   };
 
   return (
-    <Box sx={{ p: 2, height: "94%", display: "flex", flexDirection: "column" }}>
+    <Box
+      sx={{
+        flexGrow: 1,
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+      }}
+    >
       {/* Message list */}
-      <Box sx={{ flexGrow: 1, overflowY: "auto", p: 1 }}>
+      <Box
+        sx={{
+          flexGrow: 1,
+          overflowY: "auto",
+          p: 1,
+          scrollbarWidth:"none", // Firefox
+          "&::-webkit-scrollbar": {
+            width: "6px",
+            height: "6px",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "rgba(0,0,0,0.3)",
+            borderRadius: "3px",
+          },
+          "&::-webkit-scrollbar-track": {
+            backgroundColor: "transparent",
+          },
+        }}
+      >
         {msg?.map(({ content, sender, _id, group: grpId }) => {
           const isOwnMessage = sender?._id === userId;
 
@@ -121,30 +154,46 @@ useEffect(() => {
             </Stack>
           );
         })}
+        {/* Scroll target */}
+        <div ref={messagesEndRef} />
       </Box>
 
       {/* Message input */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          borderTop: "1px solid #ccc",
-          pt: 1,
-        }}
-      >
-        <TextField
-          fullWidth
-          placeholder="Type a message..."
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSend()}
-          variant="outlined"
-          size="small"
-        />
-        <IconButton color="primary" onClick={handleSend} sx={{ ml: 1 }}>
-          <SendIcon />
-        </IconButton>
-      </Box>
+      {groupMessage?.allToSendMsg ? (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            borderTop: "1px solid #ccc",
+            pt: 1,
+          }}
+        >
+          <TextField
+            fullWidth
+            placeholder="Type a message..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSend()}
+            variant="outlined"
+            size="small"
+          />
+          <IconButton color="primary" onClick={handleSend} sx={{ ml: 1 }}>
+            <SendIcon />
+          </IconButton>
+        </Box>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            color: "red",
+            p: 1,
+          }}
+        >
+          Not Allow To Send Message
+        </Box>
+      )}
     </Box>
   );
 };

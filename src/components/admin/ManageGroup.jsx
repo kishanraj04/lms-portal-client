@@ -12,10 +12,11 @@ import {
   Avatar,
 } from "@mui/material";
 import GroupIcon from "@mui/icons-material/Group";
+import { useNavigate } from "react-router-dom";
 
 function ManageGroup() {
   const { data: myGroup } = useGetMyGroupQuery();
-
+  const navigate = useNavigate()
   if (!myGroup?.group) {
     return <div>Loading...</div>;
   }
@@ -75,6 +76,7 @@ function ManageGroup() {
                     fontWeight: 500,
                   }}
                   onClick={() => {
+                    navigate(`manage-students/${grp?._id}`)
                     console.log(`Manage students for ${grp?.name}`);
                   }}
                 >

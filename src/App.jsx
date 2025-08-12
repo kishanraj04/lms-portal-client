@@ -5,10 +5,12 @@ import Footer from "./components/Footer";
 function App() {
   return (
     <>
-      <main>
-        <Header/>
-        <Outlet />
-        <Footer/>
+      <main style={{  display: "flex", flexDirection: "column" }}>
+        <Header />
+        <div style={{ flexGrow: 1, overflow: "hidden" }}>
+          <Outlet />
+        </div>
+        <Footer />
       </main>
     </>
   );
