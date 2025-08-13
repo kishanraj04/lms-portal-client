@@ -64,6 +64,15 @@ export const groupApi = createApi({
         body:{studentId}
       }),
       invalidatesTags:["grantMsg"]
+    }),
+
+    addStudentInGroup:builder.mutation({
+      query:({groupId,email})=>({
+        url:`/group/add-student/${groupId}`,
+        method:"POST",
+        body:{email}
+      }),
+      invalidatesTags:["grantMsg"]
     })
   }),
 });
@@ -75,5 +84,6 @@ export const {
   useGetStudentOfGroupQuery,
   useStopUserFromSendingTheMsgMutation,
   useAllowUserFromSendingTheMsgMutation,
-  useRemoveStudentFromGroupMutation
+  useRemoveStudentFromGroupMutation,
+  useAddStudentInGroupMutation
 } = groupApi;

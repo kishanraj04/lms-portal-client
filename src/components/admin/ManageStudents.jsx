@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { data, useParams } from "react-router-dom";
 import {
+  useAddStudentInGroupMutation,
   useAllowUserFromSendingTheMsgMutation,
   useGetStudentOfGroupQuery,
   useRemoveStudentFromGroupMutation,
@@ -22,15 +23,18 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Box,
 } from "@mui/material";
 import MessageIcon from "@mui/icons-material/Message";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { toast } from "react-toastify";
+import { useEffect } from "react";
+import Loader from "../Loader";
 function ManageStudents() {
   const { groupId } = useParams();
-  const { data: groupStudents } = useGetStudentOfGroupQuery(groupId, {
+  const { data: groupStudents,isLoading:gsLoading} = useGetStudentOfGroupQuery(groupId, {
     refetchOnMountOrArgChange: true,
   });
 
@@ -41,6 +45,7 @@ function ManageStudents() {
   const [allowToSendMessageApi] = useAllowUserFromSendingTheMsgMutation();
   const [removeStudentFromGrp, removeStuResp] =
     useRemoveStudentFromGroupMutation();
+  const [addStudentApi,addStudentResp] = useAddStudentInGroupMutation()
   // Directly use students array from API response
   const members = groupStudents?.students || [];
 
@@ -69,18 +74,30 @@ function ManageStudents() {
     }
   };
 
-  const handleAddStudent = () => {
+  useEffect(()=>{
+    console.log(addStudentResp);
+    if(addStudentResp?.isSuccess){
+      toast.success("student added")
+    }
+    else if(addStudentResp?.isError){
+      toast.error(addStudentResp?.error?.data?.message)
+    }
+  },[addStudentResp])
+  const handleAddStudent = async() => {
     if(!newStudent?.email || !newStudent?.groupId){
       return toast.error("all field required")
     }
-    console.log(`Add student with email: ${newStudent?.groupId}`);
-    // TODO: Call API to add student
+    await addStudentApi(newStudent)
     setOpenDialog(false);
     setNewStudent("");
   };
 
   return (
     <>
+    {
+      gsLoading?<Box>
+            <Loader/>
+      </Box>:<>
       <TableContainer
         component={Paper}
         sx={{
@@ -245,6 +262,8 @@ function ManageStudents() {
           </Button>
         </DialogActions>
       </Dialog>
+    </>
+    }
     </>
   );
 }
