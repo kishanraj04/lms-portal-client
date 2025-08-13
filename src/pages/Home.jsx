@@ -4,20 +4,23 @@ import Carousel from "../components/Crousal";
 import Courses from "../components/Courses";
 import SearchBar from "../components/SearchBar";
 import { useGetAllCoursesQuery } from "../store/api/courseApi";
+import { GlobalContext } from "../context/globalcontext";
 
 function Home() {
-  const [courses,setCourses] = useState();
+  const [courses, setCourses] = useState();
   const { data: course } = useGetAllCoursesQuery();
-  useEffect(()=>{
-    setCourses(course)
-  },[course])
+  const { theam, setTheam } = React.useContext(GlobalContext);
+
+  useEffect(() => {
+    setCourses(course);
+  }, [course]);
 
   return (
-    <div style={{ backgroundColor: "white" }}>
+    <div style={{ backgroundColor: theam ? "#1E1E1E" : "white" }}>
       <Carousel />
       <Box minHeight="100vh">
         {/* Search */}
-        <SearchBar setCourses={setCourses}/>
+        <SearchBar setCourses={setCourses} />
 
         {/* Courses Grid */}
         <Grid
@@ -26,11 +29,15 @@ function Home() {
           justifyContent="center"
           sx={{ px: { xs: 2, md: 4 }, py: 4 }}
         >
-          {
-          courses?.message?.length==0 ? <Typography variant="h4" marginTop={15} fontWeight={"bold"}>No Course Publis Yet</Typography> :
-          courses?.message?.map((course) => (
-            <Courses key={course._id} course={course} />
-          ))}
+          {courses?.message?.length == 0 ? (
+            <Typography variant="h4" marginTop={15} fontWeight={"bold"}>
+              No Course Publis Yet
+            </Typography>
+          ) : (
+            courses?.message?.map((course) => (
+              <Courses key={course._id} course={course} />
+            ))
+          )}
         </Grid>
       </Box>
     </div>

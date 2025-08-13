@@ -17,33 +17,28 @@ const ChatWindow = ({ group, allowToSendMsg }) => {
   const [message, setMessage] = useState("");
   const [msg, setMsg] = useState([]);
   const socket = useContext(SocketContext);
-  const { setMsgCount, gmsgCounst, setGMsgCount } = useContext(GlobalContext);
+  const { setMsgCount, gmsgCounst, setGMsgCount, theam } = useContext(GlobalContext);
   const { groupId, roomId } = group;
   const { _id: userId } = useSelector((state) => state?.user?.user);
 
-  // Fetch existing messages from DB
   const { data: groupMessage } = useGetGroupMessageQuery(groupId, {
     refetchOnMountOrArgChange: true,
   });
 
-  // Ref to scroll to bottom of messages
   const messagesEndRef = useRef(null);
 
-  // Update state when DB messages change
   useEffect(() => {
     if (groupMessage?.message) {
       setMsg(groupMessage.message);
     }
   }, [groupMessage]);
 
-  // Join room when roomId changes
   useEffect(() => {
     if (roomId) {
       socket.emit("join-room", roomId);
     }
   }, [socket, roomId]);
 
-  // Attach socket listener only once
   useEffect(() => {
     const handleMessage = (msgData) => {
       const incomingGroupId = msgData?.message?.group;
@@ -63,14 +58,12 @@ const ChatWindow = ({ group, allowToSendMsg }) => {
     return () => socket.off("msg-from-server", handleMessage);
   }, [socket, groupId, setGMsgCount]);
 
-  // Auto-scroll to bottom whenever messages change
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [msg]);
 
-  // Send message to server
   const handleSend = () => {
     if (!message.trim()) return;
 
@@ -84,6 +77,16 @@ const ChatWindow = ({ group, allowToSendMsg }) => {
     setMessage("");
   };
 
+  // Colors for dark/light mode
+  const backgroundColor = theam ? "#121212" : "#fff";
+  const messageOwnBg = theam ? "#2e7d32" : "#DCF8C6"; // green-ish for own
+  const messageOtherBg = theam ? "#424242" : "#F1F1F1"; // dark gray for others
+  const textColor = theam ? "rgba(255,255,255,0.87)" : "rgba(0,0,0,0.87)";
+  const secondaryTextColor = theam ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.6)";
+  const inputBg = theam ? "#1E1E1E" : "#fff";
+  const inputBorderColor = theam ? "#555" : "#ccc";
+  const scrollbarThumb = theam ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.3)";
+
   return (
     <Box
       sx={{
@@ -91,6 +94,8 @@ const ChatWindow = ({ group, allowToSendMsg }) => {
         display: "flex",
         flexDirection: "column",
         height: "100%",
+        backgroundColor: backgroundColor,
+        color: textColor,
       }}
     >
       {/* Message list */}
@@ -99,13 +104,13 @@ const ChatWindow = ({ group, allowToSendMsg }) => {
           flexGrow: 1,
           overflowY: "auto",
           p: 1,
-          scrollbarWidth:"none", // Firefox
+          scrollbarWidth: "none", // Firefox
           "&::-webkit-scrollbar": {
             width: "6px",
             height: "6px",
           },
           "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "rgba(0,0,0,0.3)",
+            backgroundColor: scrollbarThumb,
             borderRadius: "3px",
           },
           "&::-webkit-scrollbar-track": {
@@ -116,7 +121,7 @@ const ChatWindow = ({ group, allowToSendMsg }) => {
         {msg?.map(({ content, sender, _id, group: grpId }) => {
           const isOwnMessage = sender?._id === userId;
 
-          if (grpId !== groupId) return null; // Only show messages for this group
+          if (grpId !== groupId) return null;
 
           return (
             <Stack
@@ -137,19 +142,20 @@ const ChatWindow = ({ group, allowToSendMsg }) => {
 
               <Box
                 sx={{
-                  backgroundColor: isOwnMessage ? "#DCF8C6" : "#F1F1F1",
+                  backgroundColor: isOwnMessage ? messageOwnBg : messageOtherBg,
                   px: 1.5,
                   py: 1,
                   borderRadius: 2,
                   maxWidth: "70%",
+                  color: isOwnMessage ? "white" : textColor,
                 }}
               >
                 {!isOwnMessage && (
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography variant="caption" color={secondaryTextColor}>
                     {sender?.name}
                   </Typography>
                 )}
-                <Typography variant="body2">{content}</Typography>
+                <Typography variant="body2"  color={`${!theam?"black":"white"}`}>{content}</Typography>
               </Box>
             </Stack>
           );
@@ -164,8 +170,9 @@ const ChatWindow = ({ group, allowToSendMsg }) => {
           sx={{
             display: "flex",
             alignItems: "center",
-            borderTop: "1px solid #ccc",
+            borderTop: `1px solid ${inputBorderColor}`,
             pt: 1,
+            backgroundColor: backgroundColor,
           }}
         >
           <TextField
@@ -176,6 +183,16 @@ const ChatWindow = ({ group, allowToSendMsg }) => {
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
             variant="outlined"
             size="small"
+            sx={{
+              backgroundColor: inputBg,
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: inputBorderColor,
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: theam ? "#90caf9" : undefined,
+              },
+              input: { color: textColor },
+            }}
           />
           <IconButton color="primary" onClick={handleSend} sx={{ ml: 1 }}>
             <SendIcon />
@@ -189,6 +206,7 @@ const ChatWindow = ({ group, allowToSendMsg }) => {
             alignItems: "center",
             color: "red",
             p: 1,
+            backgroundColor: backgroundColor,
           }}
         >
           Not Allow To Send Message

@@ -3,6 +3,7 @@ import { data, useParams } from "react-router-dom";
 import {
   useAllowUserFromSendingTheMsgMutation,
   useGetStudentOfGroupQuery,
+  useRemoveStudentFromGroupMutation,
   useStopUserFromSendingTheMsgMutation,
 } from "../../store/api/groupApi";
 import {
@@ -35,10 +36,11 @@ function ManageStudents() {
 
   const [searchEmail, setSearchEmail] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
-  const [newStudentEmail, setNewStudentEmail] = useState("");
+  const [newStudent, setNewStudent] = useState({ email: "", groupId: "" });
   const [stopStudentToSendMsgApi] = useStopUserFromSendingTheMsgMutation();
   const [allowToSendMessageApi] = useAllowUserFromSendingTheMsgMutation();
-
+  const [removeStudentFromGrp, removeStuResp] =
+    useRemoveStudentFromGroupMutation();
   // Directly use students array from API response
   const members = groupStudents?.students || [];
 
@@ -55,10 +57,12 @@ function ManageStudents() {
         const resp = await stopStudentToSendMsgApi(data, {
           refetchOnMountOrArgChange: true,
         });
-        if(resp?.data?.success) toast.success("now , user cant send message")
+        if (resp?.data?.success) toast.success("now , user cant send message");
       } else {
-        const resp = await allowToSendMessageApi(data, { refetchOnMountOrArgChange: true });
-        if(resp?.data?.success) toast.success("now , user can send message")
+        const resp = await allowToSendMessageApi(data, {
+          refetchOnMountOrArgChange: true,
+        });
+        if (resp?.data?.success) toast.success("now , user can send message");
       }
     } catch (error) {
       console.log(error?.message);
@@ -66,10 +70,13 @@ function ManageStudents() {
   };
 
   const handleAddStudent = () => {
-    console.log(`Add student with email: ${newStudentEmail}`);
+    if(!newStudent?.email || !newStudent?.groupId){
+      return toast.error("all field required")
+    }
+    console.log(`Add student with email: ${newStudent?.groupId}`);
     // TODO: Call API to add student
     setOpenDialog(false);
-    setNewStudentEmail("");
+    setNewStudent("");
   };
 
   return (
@@ -176,9 +183,17 @@ function ManageStudents() {
                       cursor: "pointer",
                       "&:hover": { color: "#e57373" },
                     }}
-                    onClick={() =>
-                      console.log(`Remove ${student.email} from group`)
-                    }
+                    onClick={async () => {
+                      try {
+                        const resp = removeStudentFromGrp({
+                          groupId,
+                          studentId: student?._id,
+                        });
+                        console.log(resp);
+                      } catch (error) {
+                        console.log(error?.message);
+                      }
+                    }}
                   />
                 </TableCell>
               </TableRow>
@@ -197,8 +212,30 @@ function ManageStudents() {
             label="Enter user email"
             type="email"
             fullWidth
-            value={newStudentEmail}
-            onChange={(e) => setNewStudentEmail(e.target.value)}
+            required
+            value={newStudent?.email}
+            onChange={(e) =>
+              setNewStudent((prev) => ({
+                ...prev,
+                email: e.target.value,
+              }))
+            }
+          />
+
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Enter GroupId"
+            required
+            type="text"
+            fullWidth
+            value={newStudent?.groupId}
+            onChange={(e) =>
+              setNewStudent((prev) => ({
+                ...prev,
+               groupId: e.target.value,
+              }))
+            }
           />
         </DialogContent>
         <DialogActions>

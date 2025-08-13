@@ -29,7 +29,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import ChatIcon from "@mui/icons-material/Chat";
-
+import Brightness7Icon from '@mui/icons-material/Brightness7'; 
+import Brightness4Icon from '@mui/icons-material/Brightness4'; 
+import { GlobalContext } from "../context/globalcontext";
 const settingsWithIcons = [
   { name: "Home", icon: <Home fontSize="small" />, color: "red" },
   {
@@ -49,13 +51,16 @@ const settingsWithIcons = [
     icon: <FeedbackIcon fontSize="small" />,
     color: "orange",
   },
+  {name:"Theam" , icon:<Brightness4Icon/>,color:"black"},
   { name: "Logout", icon: <LogoutIcon fontSize="small" />, color: "cyan" },
+  
 ];
 
 function Header() {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const navigate = useNavigate();
   const [logoutUser] = useLazyLogoutUserQuery();
+  const {theam,setTheam} = React.useContext(GlobalContext)
   const dispatch = useDispatch();
   const { data: user } = useGetProfileQuery(undefined, {
     refetchOnMountOrArgChange: true,
@@ -64,6 +69,10 @@ function Header() {
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
+
+  const handleTheam = ()=>{
+    setTheam(!theam)
+  }
 
   const handleCloseUserMenu = (name) => {
     setAnchorElUser(null);
@@ -74,8 +83,8 @@ function Header() {
     else if (name === "Feedback") navigate("/feedback");
     else if (name === "Home") navigate("/");
     else if (name === "Chat") navigate("/chat");
+    else if (name === "Theam") handleTheam()
   };
-
   return (
     <AppBar position="static" sx={{ backgroundColor: "#1a237e" }}>
       <Container maxWidth="xl">

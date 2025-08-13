@@ -56,6 +56,15 @@ export const groupApi = createApi({
       }),
       invalidatesTags:["grantMsg"]
     }),
+
+    removeStudentFromGroup:builder.mutation({
+      query:({groupId,studentId})=>({
+        url:`/group/delete-student/${groupId}`,
+        method:"delete",
+        body:{studentId}
+      }),
+      invalidatesTags:["grantMsg"]
+    })
   }),
 });
 
@@ -65,5 +74,6 @@ export const {
   useGetMyGroupQuery,
   useGetStudentOfGroupQuery,
   useStopUserFromSendingTheMsgMutation,
-  useAllowUserFromSendingTheMsgMutation
+  useAllowUserFromSendingTheMsgMutation,
+  useRemoveStudentFromGroupMutation
 } = groupApi;

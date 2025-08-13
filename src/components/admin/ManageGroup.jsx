@@ -32,6 +32,7 @@ function ManageGroup() {
       <Table>
         <TableHead sx={{ backgroundColor: "#2c2c2c" }}>
           <TableRow>
+            <TableCell sx={{ color: "#fff" }}>Group Id</TableCell>
             <TableCell sx={{ color: "#fff" }}>Thumbnail</TableCell>
             <TableCell sx={{ color: "#fff" }}>Group Name</TableCell>
             <TableCell sx={{ color: "#fff" }}>Actions</TableCell>
@@ -47,6 +48,7 @@ function ManageGroup() {
                 "&:nth-of-type(even)": { backgroundColor: "#1e1e1e" },
               }}
             >
+               <TableCell sx={{ color: "#fff" }}>{grp?._id}</TableCell>
               <TableCell>
                 <Avatar
                   variant="square"

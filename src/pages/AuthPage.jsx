@@ -90,7 +90,7 @@ export const AuthPage = () => {
           maxWidth: 440,
           borderRadius: 3,
           p: isMobile ? 3 : 4,
-          backgroundColor: "#fff",
+          backgroundColor: "white",
         }}
       >
         <Tabs

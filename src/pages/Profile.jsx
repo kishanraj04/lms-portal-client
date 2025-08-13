@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   Avatar,
   Box,
@@ -19,6 +19,7 @@ import {
   useUpdateUserProfileMutation,
 } from "../store/api/userApi";
 import Courses from "../components/Courses";
+import { GlobalContext } from "../context/globalcontext";
 
 const Profile = () => {
   const [open, setOpen] = useState(false);
@@ -31,6 +32,8 @@ const Profile = () => {
     role: "Student",
     avatar: "",
   });
+
+  const { theam } = useContext(GlobalContext);
 
   useEffect(() => {
     if (userData?.user) {
@@ -75,8 +78,28 @@ const Profile = () => {
     }
   };
 
+  // Dark mode styles
+  const bgColor = theam ? "#121212" : "#fff";
+  const paperBg = theam ? "#1E1E1E" : "#fff";
+  const textColor = theam ? "rgba(255,255,255,0.87)" : "rgba(0,0,0,0.87)";
+  const secondaryTextColor = theam ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.6)";
+  const dialogBg = theam ? "#2A2A2A" : "#fff";
+  const buttonBg = theam ? "#333" : undefined;
+  const buttonColor = theam ? "white" : undefined;
+  const labelColor = theam ? "#90caf9" : "primary"; // label color for avatar text
+
   return (
-    <Box sx={{ width: "100%", mx: "auto", mt: 4, px: { xs: 2, md: 4 } }}>
+    <Box
+      sx={{
+        width: "100%",
+        mx: "auto",
+        mt: 4,
+        px: { xs: 2, md: 4 },
+        backgroundColor: bgColor,
+        color: textColor,
+        minHeight: "100vh",
+      }}
+    >
       {/* Profile Section */}
       <Paper
         elevation={0}
@@ -85,18 +108,23 @@ const Profile = () => {
           borderRadius: 3,
           maxWidth: "800px",
           mx: "auto",
-          mb: 5
-
+          mb: 5,
+          backgroundColor: paperBg,
+          color: textColor,
         }}
       >
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={4} alignItems="center">
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={4}
+          alignItems="center"
+        >
           {/* Avatar */}
           <Box textAlign="center">
             <Avatar
               src={userData?.user?.avatar || ""}
               sx={{ width: 120, height: 120, mb: 1 }}
             />
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" color={secondaryTextColor}>
               Profile Picture
             </Typography>
           </Box>
@@ -106,14 +134,24 @@ const Profile = () => {
             <Typography variant="h5" fontWeight="bold" gutterBottom>
               {userData?.user?.name || "Unnamed"}
             </Typography>
-            <Typography variant="body1" color="text.secondary">
+            <Typography variant="body1" color={secondaryTextColor}>
               {userData?.user?.email}
             </Typography>
-            <Typography variant="body2" color="text.secondary" mt={1}>
+            <Typography variant="body2" color={secondaryTextColor} mt={1}>
               Role: <strong>{userData?.user?.role}</strong>
             </Typography>
             <Box mt={2}>
-              <Button variant="contained" onClick={handleOpen}>
+              <Button
+                variant="contained"
+                onClick={handleOpen}
+                sx={{
+                  backgroundColor: buttonBg,
+                  color: buttonColor,
+                  "&:hover": {
+                    backgroundColor: theam ? "#555" : undefined,
+                  },
+                }}
+              >
                 Edit Profile
               </Button>
             </Box>
@@ -122,10 +160,20 @@ const Profile = () => {
       </Paper>
 
       {/* Edit Profile Dialog */}
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        fullWidth
+        maxWidth="sm"
+        PaperProps={{
+          sx: { backgroundColor: dialogBg, color: textColor },
+        }}
+      >
         <DialogTitle>Edit Profile</DialogTitle>
         <DialogContent>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+          <Box
+            sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}
+          >
             {/* Avatar Upload */}
             <Box textAlign="center">
               <input
@@ -135,7 +183,7 @@ const Profile = () => {
                 style={{ display: "none" }}
                 onChange={handleAvatarChange}
               />
-              <label htmlFor="upload-avatar">
+              <label htmlFor="upload-avatar" style={{ cursor: "pointer" }}>
                 <Avatar
                   src={
                     typeof profile.avatar === "string"
@@ -148,9 +196,10 @@ const Profile = () => {
                     mx: "auto",
                     cursor: "pointer",
                     mb: 1,
+                    border: theam ? "2px solid #90caf9" : undefined,
                   }}
                 />
-                <Typography variant="caption" color="primary">
+                <Typography variant="caption" color={labelColor}>
                   Click to change avatar
                 </Typography>
               </label>
@@ -163,6 +212,16 @@ const Profile = () => {
               value={profile.name}
               onChange={handleChange}
               fullWidth
+              InputLabelProps={{ style: { color: secondaryTextColor } }}
+              sx={{
+                input: { color: textColor },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: theam ? "#90caf9" : undefined,
+                },
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: theam ? "#90caf9" : undefined,
+                },
+              }}
             />
 
             {/* Role Field */}
@@ -173,6 +232,16 @@ const Profile = () => {
               value={profile.role}
               onChange={handleChange}
               fullWidth
+              InputLabelProps={{ style: { color: secondaryTextColor } }}
+              sx={{
+                input: { color: textColor },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: theam ? "#90caf9" : undefined,
+                },
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: theam ? "#90caf9" : undefined,
+                },
+              }}
             >
               <MenuItem value="Instructor">Instructor</MenuItem>
               <MenuItem value="Student">Student</MenuItem>
@@ -180,11 +249,20 @@ const Profile = () => {
           </Box>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleClose} sx={{ color: textColor }}>
+            Cancel
+          </Button>
           <Button
             variant="contained"
             onClick={handleSave}
             disabled={updateUserProfileResp.isLoading}
+            sx={{
+              backgroundColor: buttonBg,
+              color: buttonColor,
+              "&:hover": {
+                backgroundColor: theam ? "#555" : undefined,
+              },
+            }}
           >
             {updateUserProfileResp.isLoading ? "Updating..." : "Save"}
           </Button>
@@ -199,6 +277,8 @@ const Profile = () => {
           py: 5,
           px: { xs: 2, sm: 4, md: 6 },
           borderRadius: 3,
+          backgroundColor: paperBg,
+          color: textColor,
         }}
       >
         <Typography
@@ -206,7 +286,7 @@ const Profile = () => {
           fontWeight="bold"
           textAlign="center"
           gutterBottom
-          sx={{marginBottom:3}}
+          sx={{ marginBottom: 3 }}
         >
           Enrolled Courses
         </Typography>
@@ -220,11 +300,7 @@ const Profile = () => {
         >
           {userData?.user?.enrolled?.length === 0 ? (
             <Grid item xs={12}>
-              <Typography
-                variant="h6"
-                color="text.secondary"
-                textAlign="center"
-              >
+              <Typography variant="h6" color={secondaryTextColor} textAlign="center">
                 You Are Not Enrolled In Any Courses
               </Typography>
             </Grid>

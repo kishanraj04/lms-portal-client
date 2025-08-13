@@ -6,9 +6,10 @@ export const GlobalProvider = ({ children }) => {
   
  const [msgcount,setMsgCount] = useState({});
  const [gmsgCounst,setGMsgCount] = useState({})
+ const [theam,setTheam] = useState(false);
 
   return (
-    <GlobalContext.Provider value={{msgcount,setMsgCount,gmsgCounst,setGMsgCount}}>
+    <GlobalContext.Provider value={{msgcount,setMsgCount,gmsgCounst,setGMsgCount,theam,setTheam}}>
       {children}
     </GlobalContext.Provider>
   );

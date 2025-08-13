@@ -1,4 +1,3 @@
-// ChatList.jsx
 import React, { useContext } from "react";
 import {
   Avatar,
@@ -12,18 +11,30 @@ import {
 import { GlobalContext } from "../context/globalcontext";
 
 const ChatList = ({ group = [], onSelectGroup, selectedGroup }) => {
-  // const
-  const { gmsgCounst,setGMsgCount,msgcount,setMsgCount} = useContext(GlobalContext);
-  //  console.log(msgcount);
+  const { gmsgCounst, setGMsgCount, msgcount, setMsgCount, theam } = useContext(GlobalContext);
+
+  // Colors for dark/light mode
+  const bgColorDefault = theam ? "#121212" : "white";
+  const bgColorSelected = theam ? "#2e7d32" : "green";
+  const bgColorHover = theam ? "#333" : "gray";
+  const textColorDefault = theam ? "rgba(255,255,255,0.87)" : "black";
+  const unreadBadgeBg = theam ? "#ef5350" : "red";
+
   return (
-    <Box sx={{ overflowY: "auto", maxHeight: "100%" }}>
+    <Box
+      sx={{
+        overflowY: "auto",
+        maxHeight: "100%",
+        bgcolor: bgColorDefault,
+        color: textColorDefault,
+      }}
+    >
       <List>
         {group?.group?.map((g) => (
           <ListItem
             key={g?._id}
             component="button"
             onClick={() => {
-              // Reset unread count for this group
               setMsgCount((prev) => ({ ...prev, [g.groupId]: 0 }));
               setGMsgCount((prev) => ({ ...prev, [g.groupId]: 0 }));
               onSelectGroup(g);
@@ -33,12 +44,20 @@ const ChatList = ({ group = [], onSelectGroup, selectedGroup }) => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              bgcolor: `${
-                selectedGroup?.groupId !== g?.groupId ? "gray" : "brown"
-              }`,
+              bgcolor:
+                selectedGroup?.groupId === g?.groupId
+                  ? bgColorSelected
+                  : bgColorDefault,
               p: 1,
               cursor: "pointer",
-              "&:hover": { backgroundColor: "gray" },
+              color:
+                selectedGroup?.groupId === g?.groupId
+                  ? "white"
+                  : textColorDefault,
+              "&:hover": {
+                backgroundColor: bgColorHover,
+                color: "white",
+              },
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -52,7 +71,7 @@ const ChatList = ({ group = [], onSelectGroup, selectedGroup }) => {
               <Typography
                 variant="body2"
                 sx={{
-                  background: "red",
+                  background: unreadBadgeBg,
                   color: "white",
                   borderRadius: "50%",
                   width: 20,
